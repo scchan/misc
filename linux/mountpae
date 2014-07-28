@@ -1,0 +1,3 @@
+#!/bin/bash
+
+mount -t cifs //pae/public /media/pae_public -o sec=none
