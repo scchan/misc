@@ -1,0 +1,46 @@
+#!/bin/bash
+
+
+# Jack's repo
+#CPPAMP_DRIVER_NG_REPO=https://scchan@bitbucket.org/whchung/cppamp-driver-ng.git 
+#CPPAMP_NG_REPO=https://scchan@bitbucket.org/whchung/cppamp-ng.git 
+
+# Siu Chi's repo
+CPPAMP_DRIVER_NG_REPO=https://scchan@bitbucket.org/scchan/hsa-cppamp-driver-ng.git 
+CPPAMP_NG_REPO=https://scchan@bitbucket.org/scchan/hsa-cppamp-ng.git
+
+BUILD_TYPE=Release
+
+CMAKE_COMMAND=cmake ../src -DCXXAMP_ENABLE_GMAC=OFF -DCXXAMP_ENABLE_HSA_OKRA=OFF -DCXXAMP_ENABLE_HSA=ON -DCLANG_URL=$CPPAMP_NG_REPO -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=CBackend
+
+git clone $CPPAMP_DRIVER_NG_REPO src
+
+mkdir release_build
+cd release_build
+
+
+#cmake ../src -DCXXAMP_ENABLE_GMAC=OFF -DCXXAMP_ENABLE_HSA_OKRA=OFF -DCXXAMP_ENABLE_HSA=ON -DCLANG_URL=https://scchan@bitbucket.org/scchan/hsa-cppamp-ng.git -DCMAKE_BUILD_TYPE=Release -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=CBackend
+$CMAKE_COMMAND
+
+
+#git clone https://github.com/pathscale/libcxxrt.git ../src/libc++/libcxxrt
+
+# Jack's repo
+#git clone https://scchan@bitbucket.org/whchung/cppamp-ng.git ../src/compiler/tools/clang
+
+# Siu Chi's repo
+#git clone https://scchan@bitbucket.org/scchan/hsa-cppamp-ng.git  ../src/compiler/tools/clang
+
+
+# switch to the new_hsail_backend branch to enable HSA
+cd ../src  
+git fetch && git checkout new_hsail_backend
+
+cd compiler/tools/clang
+git fetch && git checkout new_hsail_backend
+
+
+# re-run  the cmake command again to configure HSA path
+cd ../../../../release_build
+$CMAKE_COMMAND
+
