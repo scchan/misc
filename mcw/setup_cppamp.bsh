@@ -20,8 +20,9 @@ cd release_build
 
 
 #cmake ../src -DCXXAMP_ENABLE_GMAC=OFF -DCXXAMP_ENABLE_HSA_OKRA=OFF -DCXXAMP_ENABLE_HSA=ON -DCLANG_URL=https://scchan@bitbucket.org/scchan/hsa-cppamp-ng.git -DCMAKE_BUILD_TYPE=Release -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=CBackend
-$CMAKE_COMMAND
 
+echo $CMAKE_COMMAND
+$CMAKE_COMMAND
 
 #git clone https://github.com/pathscale/libcxxrt.git ../src/libc++/libcxxrt
 
