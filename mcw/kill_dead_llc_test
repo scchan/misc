@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "Kill llc  which has been executed longer than 10 minutes"
+while true; do
+  sleep 2
+  ps ux | awk '/rcu_sched$/ {split($10, a, ":"); if (a[1] > 0) print $1}' - | xargs echo
+
+#- | xargs echo 
+
+  #xargs kill -15
+done
+

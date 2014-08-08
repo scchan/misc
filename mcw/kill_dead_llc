@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Kill llc  which has been executed longer than 10 minutes"
+while true; do
+  sleep 3
+  ps ux | awk '/llc$/ {split($10, a, ":"); if (a[1] >= 10) print $2}' - | xargs kill -15
+done
+
