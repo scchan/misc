@@ -24,7 +24,6 @@ cd release_build
 echo $CMAKE_COMMAND
 $CMAKE_COMMAND
 
-
 #git clone https://github.com/pathscale/libcxxrt.git ../src/libc++/libcxxrt
 
 # Jack's repo
