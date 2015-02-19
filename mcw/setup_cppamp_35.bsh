@@ -1,0 +1,25 @@
+#!/bin/bash
+
+git clone https://bitbucket.org/multicoreware/cppamp-driver-ng-35.git src
+
+mkdir build
+cd build
+
+HSA_HEADER_DIR=/opt/hsa/include
+HSA_LIBRARY_DIR=/opt/hsa/lib 
+HSA_KMT_LIBRARY_DIR=/opt/libhsakmt/lnx64a
+LIBHSAIL_HEADER_DIR=/opt/libHSAIL/include
+LIBHSAIL_LIBRARY_DIR=/opt/libHSAIL/lib
+HSAIL_COMPILER_DIR=/opt/amd/bin
+CMAKE_BUILD_TYPE=Release
+
+cmake ../src \
+      -DHSA_HEADER_DIR=$HSA_HEADER_DIR \
+      -DHSA_LIBRARY_DIR=$HSA_LIBRARY_DIR \
+      -DHSA_KMT_LIBRARY_DIR=$HSA_KMT_LIBRARY_DIR \
+      -DLIBHSAIL_HEADER_DIR=$LIBHSAIL_HEADER_DIR \
+      -DLIBHSAIL_LIBRARY_DIR=$LIBHSAIL_LIBRARY_DIR \
+      -DHSAIL_COMPILER_DIR=$HSAIL_COMPILER_DIR \
+      -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+      -DCXXAMP_ENABLE_BOLT=OFF
+
