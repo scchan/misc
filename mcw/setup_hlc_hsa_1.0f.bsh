@@ -2,6 +2,7 @@
 
 git clone https://github.com/HSAFoundation/HLC-HSAIL-Development-LLVM.git
 cd HLC-HSAIL-Development-LLVM
+git checkout hsail-1.0f
 mkdir build
 cd build
 cmake ../ -DLLVM_REQUIRES_EH=ON -DLLVM_ENABLE_RTTI=ON
