@@ -1,0 +1,28 @@
+#!/bin/bash
+
+builtin=$1
+
+
+PREPARE_BUILTINS=../libclc/utils/prepare-builtins
+
+$PREPARE_BUILTINS $builtin -o $builtin.pre.bc
+
+/opt/amd/bin/llvm-dis -o=$builtin.pre.ll $builtin.pre.bc
+
+sed 's/weak spir_func/linkonce_odr spir_func/g' <$builtin.pre.ll >$builtin.tmp.ll
+mv $builtin.tmp.ll $builtin.fixed.ll
+
+sed 's/, \!fpmath \![0-9]\+//g' <$builtin.fixed.ll >$builtin.tmp.ll
+mv $builtin.tmp.ll $builtin.fixed.ll
+
+sed 's/linkonce_odr addrspace/internal addrspace/g' <$builtin.fixed.ll >$builtin.tmp.ll
+mv $builtin.tmp.ll $builtin.fixed.ll
+
+grep -v "!llvm.ident"  $builtin.fixed.ll >$builtin.tmp.ll
+mv $builtin.tmp.ll $builtin.fixed.ll
+
+
+
+mv $builtin.fixed.ll $builtin.opt.ll 
+/opt/amd/bin/llvm-as -o=$builtin.opt.bc $builtin.opt.ll
+
