@@ -1,0 +1,39 @@
+#!/bin/bash
+
+
+REPO=scchan
+
+if [ "$REPO" = "scchan" ]; then
+ CPPAMP_DRIVER_NG=https://scchan@bitbucket.org/scchan/cppamp-driver-ng-35.git
+ CLANG_URL=https://scchan@bitbucket.org/scchan/cppamp-ng-35.git
+else
+ CPPAMP_DRIVER_NG=https://bitbucket.org/multicoreware/cppamp-driver-ng-35.git 
+ CLANG_URL=https://bitbucket.org/multicoreware/cppamp-ng-35.git
+fi
+
+
+git clone $CPPAMP_DRIVER_NG src
+
+
+#cd src
+#git fetch && git checkout turnoff_simplify_libcalls
+#cd ..
+
+mkdir build
+cd build
+
+HSA_HEADER_DIR=/opt/hsa/include
+HSA_LIBRARY_DIR=/opt/hsa/lib 
+HSA_KMT_LIBRARY_DIR=/opt/hsa/lib
+HSAIL_COMPILER_DIR=/opt/amd/bin
+CMAKE_BUILD_TYPE=Release
+
+
+cmake ../src \
+      -DHSA_HEADER_DIR=$HSA_HEADER_DIR \
+      -DHSA_LIBRARY_DIR=$HSA_LIBRARY_DIR \
+      -DHSAIL_COMPILER_DIR=$HSAIL_COMPILER_DIR \
+      -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+      -DCXXAMP_ENABLE_BOLT=ON \
+      -DCLANG_URL=$CLANG_URL
+
