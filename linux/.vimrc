@@ -17,6 +17,8 @@ set showmatch
 
 filetype plugin on
 
+xnoremap p pgvy
+
 " Taglist
 let Tlist_Use_Right_Window = 1
 let Tlist_Exit_OnlyWindow = 1
