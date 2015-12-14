@@ -16,6 +16,7 @@ HSAIL_COMPILER_DIR=/home/scchan/code/github/HSAFoundation/HLC-HSAIL-Development-
 while [[ "$#" > 1 ]]; do case $1 in
   --branch) BRANCH="$2";;
   --build)  BUILD="$2";;
+  --hlc)    HSAIL_COMPILER_DIR="$2";;
   *);;
   esac; shift
 done
