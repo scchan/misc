@@ -11,7 +11,7 @@ CLANG_URL=https://bitbucket.org/multicoreware/hcc-clang.git
 HSA_HEADER_DIR=/opt/hsa/include
 HSA_LIBRARY_DIR=/opt/hsa/lib
 HSA_KMT_LIBRARY_DIR=$HSA_LIBRARY_DIR
-HSAIL_COMPILER_DIR=/home/scchan/code/github/HSAFoundation/HLC-HSAIL-Development-LLVM
+HSAIL_COMPILER_DIR=$HOME/code/github/HSAFoundation/HLC-HSAIL-Development-LLVM
 
 while [[ "$#" > 1 ]]; do case $1 in
   --branch) BRANCH="$2";;
