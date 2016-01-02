@@ -11,7 +11,7 @@ CLANG_URL=https://bitbucket.org/multicoreware/hcc-clang.git
 HSA_HEADER_DIR=/opt/hsa/include
 HSA_LIBRARY_DIR=/opt/hsa/lib
 HSA_KMT_LIBRARY_DIR=$HSA_LIBRARY_DIR
-HSAIL_COMPILER_DIR=$HOME/code/github/HSAFoundation/HLC-HSAIL-Development-LLVM
+HSAIL_COMPILER_DIR=$HOME/code/github/HLC-HSAIL-Development-LLVM
 
 while [[ "$#" > 1 ]]; do case $1 in
   --branch) BRANCH="$2";;
@@ -30,16 +30,10 @@ done
 # CLANG_URL=https://bitbucket.org/multicoreware/hcc-clang.git
 #fi
 
-git clone $CPPAMP_DRIVER_NG src
-
-
-cd src
-git fetch && git checkout $BRANCH
-cd ..
+git clone -b $BRANCH $CPPAMP_DRIVER_NG src
 
 mkdir build
 cd build
-
 
 CMAKE_BUILD_TYPE=$BUILD
 
@@ -51,8 +45,14 @@ cmake ../src \
       -DCLANG_URL=$CLANG_URL\
       -DHSAIL_COMPILER_DIR=$HSAIL_COMPILER_DIR \
 
-
 #-DHSA_HOF_DIR=$HSA_HOF_DIR \
 
 #  -DHSA_KMT_LIBRARY_DIR=$HSA_KMT_LIBRARY_DIR \
 
+make -j16 world;make -j16
+
+# the docs will cause the debian package to be uninstallable...skip the docs for now
+#make docs
+
+LD_LIBRARY_PATH=/opt/hsa/lib make test
+make package
