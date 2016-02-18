@@ -14,17 +14,24 @@ cd ../..
 
 
 #build llvm,lld,clang
+
+LC_INSTALL_PATH=/opt/hcc/lightning
+
 cd llvm
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH   ..
 make -j $NUM_THREADS
 cd ../..
+sudo make install
+
 
 # build hcc with lightning
-MY_LLVM_BIN=$(readlink -f llvm/build/bin)
+#MY_LLVM_BIN=$(readlink -f llvm/build/bin)
+MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
-git clone https://bitbucket.org/multicoreware/hcc.git
+
+git clone https://scchan@bitbucket.org/scchan/hcc.git
 cd hcc
 mkdir build
 cd build
