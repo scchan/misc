@@ -1,6 +1,7 @@
 #!/bin/bash
 
 NUM_THREADS=32
+CMAKE_BUILD_TYPE=Release
 
 git clone https://github.com/llvm-mirror/llvm.git
 
@@ -20,9 +21,8 @@ LC_INSTALL_PATH=/opt/hcc/lightning
 cd llvm
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH   ..
+cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE  ..
 make -j $NUM_THREADS
-cd ../..
 sudo make install
 
 
@@ -44,6 +44,7 @@ cmake .. \
 -DHSA_USE_AMDGPU_BACKEND=ON \
 -DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
 
 
 #-DHSA_LIBRARY=$MY_HSA_LIB \
