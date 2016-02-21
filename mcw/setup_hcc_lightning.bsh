@@ -32,13 +32,12 @@ MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 
 git clone https://scchan@bitbucket.org/scchan/hcc.git
-cd hcc
 mkdir build
 cd build
 
 HSA_AMDGPU_GPU_TARGET=fiji
 
-cmake .. \
+cmake ..\hcc \
 -DHSAIL_COMPILER="" \
 -DHSA_HOF="" \
 -DHSA_USE_AMDGPU_BACKEND=ON \
@@ -53,3 +52,5 @@ cmake .. \
 
 make -j $NUM_THREADS world
 make -j $NUM_THREADS
+
+
