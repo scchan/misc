@@ -37,7 +37,7 @@ cd build
 
 HSA_AMDGPU_GPU_TARGET=fiji
 
-cmake ..\hcc \
+cmake ../hcc \
 -DHSAIL_COMPILER="" \
 -DHSA_HOF="" \
 -DHSA_USE_AMDGPU_BACKEND=ON \
