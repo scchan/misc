@@ -24,7 +24,7 @@ cd build
 cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE  ..
 make -j $NUM_THREADS
 sudo make install
-
+cd ../..
 
 # build hcc with lightning
 #MY_LLVM_BIN=$(readlink -f llvm/build/bin)
