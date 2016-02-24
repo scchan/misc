@@ -54,7 +54,7 @@ cmake ../src \
 
 #  -DHSA_KMT_LIBRARY_DIR=$HSA_KMT_LIBRARY_DIR \
 
-make -j16 world;make -j16
+make -j32 world;make -j32
 
 # the docs will cause the debian package to be uninstallable...skip the docs for now
 #make docs
