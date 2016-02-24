@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+my $num = $ARGV[0];
+my $program = $ARGV[1];
+
+for (my $i=0; $i<$num; $i++) {
+  my $child_pid;
+  if (!defined($child_pid = fork())) {
+    die "cannot fork: $!";
+  } elsif ($child_pid) {
+    # I'm the parent
+  } else {
+    # I'm the child
+    system($program);
+  } 
+}

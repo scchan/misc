@@ -1,0 +1,56 @@
+#!/bin/bash
+
+NUM_THREADS=32
+CMAKE_BUILD_TYPE=Release
+
+git clone https://github.com/llvm-mirror/llvm.git
+
+# lld
+cd llvm/tools
+git clone https://github.com/llvm-mirror/lld.git
+
+# plain vanilla clang
+git clone https://github.com/llvm-mirror/clang.git
+cd ../..
+
+
+#build llvm,lld,clang
+
+LC_INSTALL_PATH=/opt/hcc/lightning
+
+cd llvm
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE  ..
+make -j $NUM_THREADS
+sudo make install
+cd ../..
+
+# build hcc with lightning
+#MY_LLVM_BIN=$(readlink -f llvm/build/bin)
+MY_LLVM_BIN=$LC_INSTALL_PATH/bin
+
+
+git clone https://scchan@bitbucket.org/scchan/hcc.git
+mkdir build
+cd build
+
+HSA_AMDGPU_GPU_TARGET=fiji
+
+cmake ../hcc \
+-DHSAIL_COMPILER="" \
+-DHSA_HOF="" \
+-DHSA_USE_AMDGPU_BACKEND=ON \
+-DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
+-DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+
+
+#-DHSA_LIBRARY=$MY_HSA_LIB \
+#-DHSA_KMT_LIBRARY=$MY_KMT \
+#-DHSA_HEADER=$MY_HSA_INC 
+
+make -j $NUM_THREADS world
+make -j $NUM_THREADS
+
+
