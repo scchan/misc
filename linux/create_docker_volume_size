@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# this creates a ~300GB docker volume instead of a volume with default size of 100GB 
+dd if=/dev/zero of=/var/lib/docker/devicemapper/devicemapper/data bs=1G count=0 seek=300
+
