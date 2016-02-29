@@ -31,7 +31,7 @@ cd ../..
 MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 
-git clone https://scchan@bitbucket.org/scchan/hcc.git
+git clone https://bitbucket.org/multicoreware/hcc.git
 mkdir build
 cd build
 
