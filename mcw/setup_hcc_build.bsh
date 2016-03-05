@@ -12,11 +12,13 @@ HSA_HEADER_DIR=/opt/hsa/include
 HSA_LIBRARY_DIR=/opt/hsa/lib
 HSA_KMT_LIBRARY_DIR=$HSA_LIBRARY_DIR
 HSAIL_COMPILER_DIR=$HOME/code/github/HLC-HSAIL-Development-LLVM
+NUM_BUILD_THREADS=16
 
 while [[ "$#" > 1 ]]; do case $1 in
   --branch) BRANCH="$2";;
   --build)  BUILD="$2";;
   --hlc)    HSAIL_COMPILER_DIR="$2";;
+  --threads) NUM_BUILD_THREADS="$2";;
   *);;
   esac; shift
 done
@@ -25,7 +27,7 @@ done
 #if [ "$REPO" = "scchan" ]; then
 # CPPAMP_DRIVER_NG=https://scchan@bitbucket.org/scchan/cppamp-driver-ng-35.git
 #CLANG_URL=https://scchan@bitbucket.org/scchan/cppamp-ng-35.git
-#else
+#else 
 # CPPAMP_DRIVER_NG=https://bitbucket.org/multicoreware/hcc.git
 # CLANG_URL=https://bitbucket.org/multicoreware/hcc-clang.git
 #fi
@@ -38,6 +40,7 @@ cd build
 CMAKE_BUILD_TYPE=$BUILD
 
 cmake ../src \
+      -DNUM_BUILD_THREADS=$NUM_BUILD_THREADS \
       -DHSA_HEADER_DIR=$HSA_HEADER_DIR \
       -DHSA_LIBRARY_DIR=$HSA_LIBRARY_DIR \
       -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
@@ -49,7 +52,7 @@ cmake ../src \
 
 #  -DHSA_KMT_LIBRARY_DIR=$HSA_KMT_LIBRARY_DIR \
 
-make -j16 world;make -j16
+make -j $NUM_BUILD_THREADS world;make -j $NUM_BUILD_THREADS
 
 # the docs will cause the debian package to be uninstallable...skip the docs for now
 #make docs
