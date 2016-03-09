@@ -19,6 +19,7 @@ while [[ "$#" > 1 ]]; do case $1 in
   --build)  BUILD="$2";;
   --hlc)    HSAIL_COMPILER_DIR="$2";;
   --threads) NUM_BUILD_THREADS="$2";;
+  --hcc) CPPAMP_DRIVER_NG="$2";; 
   *);;
   esac; shift
 done
