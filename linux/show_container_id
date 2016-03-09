@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+# Show the Docker ID on the desktop as a notification
+notify-send 'Docker Container ID' `$HOME/bin/self_container_id `  --icon=dialog-information
+
