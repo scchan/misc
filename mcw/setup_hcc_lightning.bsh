@@ -3,14 +3,46 @@
 NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
 
+HCC_DRIVER=https://bitbucket.org/multicoreware/hcc.git
+CLANG_URL=https://bitbucket.org/multicoreware/hcc-clang.git
+LLVM_CHECKOUT="master"
+LLD_CHECKOUT="master"
+HCC_DRIVER_CHECKOUT="master"
+HSA_AMDGPU_GPU_TARGET=fiji
+
+while [[ "$#" > 1 ]]; do case $1 in
+  --build)  CMAKE_BUILD_TYPE="$2";;
+  --threads) NUM_BUILD_THREADS="$2";;
+  --hcc) HCC_DRIVER="$2";;
+  --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
+  --llvm_checkout) LLVM_CHECKOUT="$2";;
+  --lld_checkout) LLD_CHECKOUT="$2";;
+  --arch) HSA_AMDGPU_GPU_TARGET="$2";;
+  *);;
+  esac; shift
+done
+
+
+
+
+
 git clone https://github.com/llvm-mirror/llvm.git
+cd llvm
+git checkout $LLVM_CHECKOUT
+cd ..
 
 # lld
 cd llvm/tools
 git clone https://github.com/llvm-mirror/lld.git
+cd lld
+git checkout $LLD_CHECKOUT
+cd ..
+
 
 # plain vanilla clang
-git clone https://github.com/llvm-mirror/clang.git
+#git clone https://github.com/llvm-mirror/clang.git
+
+
 cd ../..
 
 
@@ -31,16 +63,16 @@ cd ../..
 MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 
-git clone https://bitbucket.org/multicoreware/hcc.git
+git clone $HCC_DRIVER
+cd hcc
+git checkout $HCC_DRIVER_CHECKOUT
+cd ..
+
 mkdir build
 cd build
 
-HSA_AMDGPU_GPU_TARGET=fiji
-
 cmake ../hcc \
 -DNUM_BUILD_THREADS=$NUM_THREADS \
--DHSAIL_COMPILER="" \
--DHSA_HOF="" \
 -DHSA_USE_AMDGPU_BACKEND=ON \
 -DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
