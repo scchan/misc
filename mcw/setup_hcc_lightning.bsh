@@ -46,6 +46,7 @@ cd ..
 cd ../..
 
 
+
 #build llvm,lld,clang
 
 LC_INSTALL_PATH=/opt/hcc/lightning
@@ -57,6 +58,20 @@ cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TY
 make -j $NUM_THREADS
 sudo make install
 cd ../..
+
+
+
+AMDPHDRS_BIN_DIR=/opt/amdphdrs/bin
+git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
+cd LLVM-AMDGPU-Assembler-Extra 
+mkdir build
+cd build
+cmake  -DLLVM_DIR=../llvm/build  ..
+make -j  $NUM_THREADS
+sudo mkdir -p $AMDPHDRS_BIN_DIR
+sudo cp -f amdphdrs/amdphdrs $AMDPHDRS_BIN_DIR
+cd ../..
+
 
 # build hcc with lightning
 #MY_LLVM_BIN=$(readlink -f llvm/build/bin)
@@ -77,6 +92,7 @@ cmake ../hcc \
 -DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+-DAMDPHDRS_DIR=$AMDPHDRS_DIR
 
 
 #-DHSA_LIBRARY=$MY_HSA_LIB \
