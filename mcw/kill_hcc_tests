@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ps -ef | grep $USER | grep hcc | grep tests | grep out | grep -v grep | awk '{print $2}' | xargs kill -9
