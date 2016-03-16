@@ -61,15 +61,15 @@ cd ../..
 
 
 
-AMDPHDRS_BIN_DIR=/opt/amdphdrs/bin
+AMDPHDRS_DIR=/opt/amdphdrs/bin
 git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
 cd LLVM-AMDGPU-Assembler-Extra 
 mkdir build
 cd build
 cmake  -DLLVM_DIR=../llvm/build  ..
 make -j  $NUM_THREADS
-sudo mkdir -p $AMDPHDRS_BIN_DIR
-sudo cp -f amdphdrs/amdphdrs $AMDPHDRS_BIN_DIR
+sudo mkdir -p $AMDPHDRS_DIR
+sudo cp -f amdphdrs/amdphdrs $AMDPHDRS_DIR
 cd ../..
 
 
