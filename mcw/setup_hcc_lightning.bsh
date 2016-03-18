@@ -9,6 +9,7 @@ LLVM_CHECKOUT="master"
 LLD_CHECKOUT="master"
 HCC_DRIVER_CHECKOUT="master"
 HSA_AMDGPU_GPU_TARGET=fiji
+CXXAMP_ENABLE_BOLT="OFF" 
 
 while [[ "$#" > 1 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
@@ -18,6 +19,7 @@ while [[ "$#" > 1 ]]; do case $1 in
   --llvm_checkout) LLVM_CHECKOUT="$2";;
   --lld_checkout) LLD_CHECKOUT="$2";;
   --arch) HSA_AMDGPU_GPU_TARGET="$2";;
+  --bolt) CXXAMP_ENABLE_BOLT="ON";;
   *);;
   esac; shift
 done
@@ -87,6 +89,7 @@ mkdir build
 cd build
 
 cmake ../hcc \
+-DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
 -DNUM_BUILD_THREADS=$NUM_THREADS \
 -DHSA_USE_AMDGPU_BACKEND=ON \
 -DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \

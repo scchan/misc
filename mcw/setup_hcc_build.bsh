@@ -13,6 +13,8 @@ HSA_LIBRARY_DIR=/opt/hsa/lib
 HSA_KMT_LIBRARY_DIR=$HSA_LIBRARY_DIR
 HSAIL_COMPILER_DIR=$HOME/code/github/HLC-HSAIL-Development-LLVM
 NUM_BUILD_THREADS=32
+CXXAMP_ENABLE_BOLT="OFF"
+
 
 while [[ "$#" > 1 ]]; do case $1 in
   --branch) BRANCH="$2";;
@@ -20,6 +22,7 @@ while [[ "$#" > 1 ]]; do case $1 in
   --hlc)    HSAIL_COMPILER_DIR="$2";;
   --threads) NUM_BUILD_THREADS="$2";;
   --hcc) CPPAMP_DRIVER_NG="$2";; 
+  --bolt) CXXAMP_ENABLE_BOLT="ON";;
   *);;
   esac; shift
 done
@@ -41,6 +44,7 @@ cd build
 CMAKE_BUILD_TYPE=$BUILD
 
 cmake ../src \
+      -DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
       -DNUM_BUILD_THREADS=$NUM_BUILD_THREADS \
       -DHSA_HEADER_DIR=$HSA_HEADER_DIR \
       -DHSA_LIBRARY_DIR=$HSA_LIBRARY_DIR \
