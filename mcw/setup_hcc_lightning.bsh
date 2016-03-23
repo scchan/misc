@@ -3,8 +3,8 @@
 NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
 
-HCC_DRIVER=https://bitbucket.org/multicoreware/hcc.git
-CLANG_URL=https://bitbucket.org/multicoreware/hcc-clang.git
+HCC_DRIVER=https://github.com/RadeonOpenCompute/hcc.git
+CLANG_URL=https://github.com/RadeonOpenCompute/hcc-clang.git
 LLVM_CHECKOUT="master"
 LLD_CHECKOUT="master"
 HCC_DRIVER_CHECKOUT="master"
