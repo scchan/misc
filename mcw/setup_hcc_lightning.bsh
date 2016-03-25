@@ -17,9 +17,7 @@ CXXAMP_ENABLE_BOLT="OFF"
 
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
-  --threads)
-      echo "--threads"
-      NUM_BUILD_THREADS="$2";;
+  --threads) NUM_BUILD_THREADS="$2";;
   --hcc) HCC_DRIVER="$2";;
   --scc_hcc) HCC_DRIVER=$SCCHAN_HCC_DRIVER;;
   --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
