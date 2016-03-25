@@ -5,16 +5,23 @@ CMAKE_BUILD_TYPE=Release
 
 HCC_DRIVER=https://github.com/RadeonOpenCompute/hcc.git
 CLANG_URL=https://github.com/RadeonOpenCompute/hcc-clang.git
+
+SCCHAN_HCC_DRIVER="https://github.com/scchan/hcc.git"
+SCCHAN_CLANG_URL="https://github.com/scchan/hcc-clang.git"
+
 LLVM_CHECKOUT="master"
 LLD_CHECKOUT="master"
 HCC_DRIVER_CHECKOUT="master"
 HSA_AMDGPU_GPU_TARGET=fiji
 CXXAMP_ENABLE_BOLT="OFF" 
 
-while [[ "$#" > 1 ]]; do case $1 in
+while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
-  --threads) NUM_BUILD_THREADS="$2";;
+  --threads)
+      echo "--threads"
+      NUM_BUILD_THREADS="$2";;
   --hcc) HCC_DRIVER="$2";;
+  --scc_hcc) HCC_DRIVER=$SCCHAN_HCC_DRIVER;;
   --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
   --llvm_checkout) LLVM_CHECKOUT="$2";;
   --lld_checkout) LLD_CHECKOUT="$2";;
@@ -24,9 +31,8 @@ while [[ "$#" > 1 ]]; do case $1 in
   esac; shift
 done
 
-
-
-
+echo "hcc: $HCC_DRIVER"
+echo "hcc-clang: $CLANG_URL"
 
 git clone https://github.com/llvm-mirror/llvm.git
 cd llvm
