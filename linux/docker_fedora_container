@@ -1,0 +1,21 @@
+
+Note for running a Fedora container
+
+Problem: 
+Starting an sshd will get an "Failed to get D-Bus connection: No connection to service manager." error
+
+Solution:
+The trick is to configure sshd to be started as service by systemd
+
+1- first install openssh-server and systemd
+2- run "systemctl enable sshd.service" to enable the sshd service
+3- save the container into an image
+4- start a new container from the previously saved image to the /usr/sbin/init command:
+
+  docker run --privileged -d -ti -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup scchan:fedora_22 /usr/sbin/init
+
+The -e "container=docker" looks like to be some secret environment variable 
+The -v ...   maps /sys/fs/cgroup into the container which is needed by systemd
+
+5- find out the IP address of the container and ssh into it
+
