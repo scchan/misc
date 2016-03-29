@@ -3,15 +3,54 @@
 NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
 
+HCC_DRIVER=https://github.com/RadeonOpenCompute/hcc.git
+CLANG_URL=https://github.com/RadeonOpenCompute/hcc-clang.git
+
+SCCHAN_HCC_DRIVER="https://github.com/scchan/hcc.git"
+SCCHAN_CLANG_URL="https://github.com/scchan/hcc-clang.git"
+
+LLVM_CHECKOUT="master"
+LLD_CHECKOUT="master"
+HCC_DRIVER_CHECKOUT="master"
+HSA_AMDGPU_GPU_TARGET=fiji
+CXXAMP_ENABLE_BOLT="OFF" 
+
+while [[ "$#" > 0 ]]; do case $1 in
+  --build)  CMAKE_BUILD_TYPE="$2";;
+  --threads) NUM_BUILD_THREADS="$2";;
+  --hcc) HCC_DRIVER="$2";;
+  --scc_hcc) HCC_DRIVER=$SCCHAN_HCC_DRIVER;;
+  --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
+  --llvm_checkout) LLVM_CHECKOUT="$2";;
+  --lld_checkout) LLD_CHECKOUT="$2";;
+  --arch) HSA_AMDGPU_GPU_TARGET="$2";;
+  --bolt) CXXAMP_ENABLE_BOLT="ON";;
+  *);;
+  esac; shift
+done
+
+echo "hcc: $HCC_DRIVER"
+echo "hcc-clang: $CLANG_URL"
+
 git clone https://github.com/llvm-mirror/llvm.git
+cd llvm
+git checkout $LLVM_CHECKOUT
+cd ..
 
 # lld
 cd llvm/tools
 git clone https://github.com/llvm-mirror/lld.git
+cd lld
+git checkout $LLD_CHECKOUT
+cd ..
+
 
 # plain vanilla clang
-git clone https://github.com/llvm-mirror/clang.git
+#git clone https://github.com/llvm-mirror/clang.git
+
+
 cd ../..
+
 
 
 #build llvm,lld,clang
@@ -21,29 +60,46 @@ LC_INSTALL_PATH=/opt/hcc/lightning
 cd llvm
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE  ..
+cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
 make -j $NUM_THREADS
 sudo make install
 cd ../..
+
+
+
+AMDPHDRS_DIR=/opt/amdphdrs/bin
+git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
+cd LLVM-AMDGPU-Assembler-Extra 
+mkdir build
+cd build
+cmake  -DLLVM_DIR=../llvm/build  ..
+make -j  $NUM_THREADS
+sudo mkdir -p $AMDPHDRS_DIR
+sudo cp -f amdphdrs/amdphdrs $AMDPHDRS_DIR
+cd ../..
+
 
 # build hcc with lightning
 #MY_LLVM_BIN=$(readlink -f llvm/build/bin)
 MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 
-git clone https://bitbucket.org/multicoreware/hcc.git
+git clone $HCC_DRIVER
+cd hcc
+git checkout $HCC_DRIVER_CHECKOUT
+cd ..
+
 mkdir build
 cd build
 
-HSA_AMDGPU_GPU_TARGET=fiji
-
 cmake ../hcc \
--DHSAIL_COMPILER="" \
--DHSA_HOF="" \
+-DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
+-DNUM_BUILD_THREADS=$NUM_THREADS \
 -DHSA_USE_AMDGPU_BACKEND=ON \
 -DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+-DAMDPHDRS_DIR=$AMDPHDRS_DIR
 
 
 #-DHSA_LIBRARY=$MY_HSA_LIB \
