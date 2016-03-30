@@ -14,6 +14,7 @@ LLD_CHECKOUT="master"
 HCC_DRIVER_CHECKOUT="master"
 HSA_AMDGPU_GPU_TARGET=fiji
 CXXAMP_ENABLE_BOLT="OFF" 
+HCC_RUNTIME_CFLAGS=""
 
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
@@ -25,6 +26,22 @@ while [[ "$#" > 0 ]]; do case $1 in
   --lld_checkout) LLD_CHECKOUT="$2";;
   --arch) HSA_AMDGPU_GPU_TARGET="$2";;
   --bolt) CXXAMP_ENABLE_BOLT="ON";;
+  --debug_rt) HCC_RUNTIME_CFLAGS"$HCC_RUNTIME_CFLAGS -g";;
+  --help) 
+     echo "options: "
+     echo "  --build <Release|Debug>"
+     echo "  --threads <threads>"
+     echo "  --hcc <git url for hcc driver>"
+     echo "  --scc_hcc"
+     echo "  --hcc_checkout <branch>"
+     echo "  --llvm_checkout <LC branch>"
+     echo "  --lld_checkout <lld branch>"
+     echo "  --arch <fuji|kaveri|carrizo>"
+     echo "  --bolt <ON|OFF>"
+     echo "  --debug_rt"
+     echo "  --help"
+     exit
+     ;;
   *);;
   esac; shift
 done
@@ -98,6 +115,7 @@ cmake ../hcc \
 -DHSA_USE_AMDGPU_BACKEND=ON \
 -DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
+-DHCC_RUNTIME_CFLAGS=$HCC_RUNTIME_CFLAGS\
 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
 -DAMDPHDRS_DIR=$AMDPHDRS_DIR
 
