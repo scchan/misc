@@ -1,3 +1,3 @@
 
 
-sudo dnf install cmake git subversion gcc-c++ libstdc++-devel libdwarf-devel elfutils-libelf-devel llvm llvm-devel  re2c ncurses-devel 
+sudo dnf install cmake git subversion gcc-c++ libstdc++-devel libdwarf-devel elfutils-libelf-devel llvm llvm-devel  re2c ncurses-devel patch wget
