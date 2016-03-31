@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 
 NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
