@@ -17,6 +17,7 @@ HCC_DRIVER_CHECKOUT="master"
 HSA_AMDGPU_GPU_TARGET=fiji
 CXXAMP_ENABLE_BOLT="OFF" 
 HCC_RUNTIME_CFLAGS=""
+PROJECT_GENERATORS="Unix Makefiles"
 
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
@@ -29,6 +30,9 @@ while [[ "$#" > 0 ]]; do case $1 in
   --arch) HSA_AMDGPU_GPU_TARGET="$2";;
   --bolt) CXXAMP_ENABLE_BOLT="ON";;
   --debug_rt) HCC_RUNTIME_CFLAGS+=-g;;
+  --eclipse) 
+      PROJECT_GENERATORS="Eclipse CDT4 - Unix Makefiles"
+      ;;
   --help) 
      echo "options: "
      echo "  --build <Release|Debug>"
@@ -41,6 +45,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --arch <fuji|kaveri|carrizo>"
      echo "  --bolt <ON|OFF>"
      echo "  --debug_rt"
+     echo "  --eclipse"
      echo "  --help"
      exit
      ;;
@@ -119,6 +124,7 @@ cmake ../hcc \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
 -DHCC_RUNTIME_CFLAGS=\"$HCC_RUNTIME_CFLAGS\" \
 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+-G"$PROJECT_GENERATORS" \
 -DAMDPHDRS_DIR=$AMDPHDRS_DIR
 
 
