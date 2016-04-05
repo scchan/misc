@@ -98,7 +98,7 @@ cd ../..
 
 
 #AMDPHDRS_DIR=/opt/amdphdrs/bin
-AMDPHDRS_DIR=/opt/amd/amdphdrs/bin
+AMDPHDRS_DIR=/opt/amd/bin
 
 git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
 cd LLVM-AMDGPU-Assembler-Extra 
