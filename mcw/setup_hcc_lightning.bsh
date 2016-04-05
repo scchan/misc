@@ -10,7 +10,9 @@ CLANG_URL=https://github.com/RadeonOpenCompute/hcc-clang.git
 SCCHAN_HCC_DRIVER="https://github.com/scchan/hcc.git"
 SCCHAN_CLANG_URL="https://github.com/scchan/hcc-clang.git"
 
-LLVM_CHECKOUT="master"
+LIGHTNING="https://github.com/llvm-mirror/llvm.git"
+LIGHTNING_CHECKOUT="master"
+
 LLD_CHECKOUT="master"
 HCC_DRIVER_CHECKOUT="master"
 HSA_AMDGPU_GPU_TARGET=fiji
@@ -32,6 +34,11 @@ while [[ "$#" > 0 ]]; do case $1 in
   --eclipse) 
       PROJECT_GENERATORS="Eclipse CDT4 - Unix Makefiles"
       ;;
+  --roc-1.0)
+      LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
+      LIGHTNING_CHECKOUT="roc-1.0"
+      HCC_DRIVER_CHECKOUT="roc-1.0"
+      ;;
   --help) 
      echo "options: "
      echo "  --build <Release|Debug>"
@@ -45,6 +52,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --bolt <ON|OFF>"
      echo "  --debug_rt"
      echo "  --eclipse"
+     echo "  --roc-1.0"
      echo "  --help"
      exit
      ;;
@@ -55,30 +63,30 @@ done
 echo "hcc: $HCC_DRIVER"
 echo "hcc-clang: $CLANG_URL"
 
-git clone https://github.com/llvm-mirror/llvm.git
+git clone $LIGHTNING
 cd llvm
-git checkout $LLVM_CHECKOUT
+git checkout $LIGHTNING_CHECKOUT
 cd ..
 
 # lld
-cd llvm/tools
-git clone https://github.com/llvm-mirror/lld.git
-cd lld
-git checkout $LLD_CHECKOUT
-cd ..
-
+#cd llvm/tools
+#git clone https://github.com/llvm-mirror/lld.git
+#cd lld
+#git checkout $LLD_CHECKOUT
+#cd ..
 
 # plain vanilla clang
 #git clone https://github.com/llvm-mirror/clang.git
 
-
-cd ../..
+#cd ../..
 
 
 
 #build llvm,lld,clang
 
-LC_INSTALL_PATH=/opt/hcc/lightning
+#LC_INSTALL_PATH=/opt/hcc/lightning
+
+LC_INSTALL_PATH=/opt/amd/llvm
 
 cd llvm
 mkdir build
@@ -89,8 +97,9 @@ sudo make install
 cd ../..
 
 
+#AMDPHDRS_DIR=/opt/amdphdrs/bin
+AMDPHDRS_DIR=/opt/amd/amdphdrs/bin
 
-AMDPHDRS_DIR=/opt/amdphdrs/bin
 git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
 cd LLVM-AMDGPU-Assembler-Extra 
 mkdir build
