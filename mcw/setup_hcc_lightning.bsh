@@ -84,9 +84,7 @@ cd ..
 
 #build llvm,lld,clang
 
-#LC_INSTALL_PATH=/opt/hcc/lightning
-
-LC_INSTALL_PATH=/opt/amd/llvm
+LC_INSTALL_PATH=/opt/rocm/llvm
 
 cd llvm
 mkdir build
@@ -97,8 +95,7 @@ sudo make install
 cd ../..
 
 
-#AMDPHDRS_DIR=/opt/amdphdrs/bin
-AMDPHDRS_DIR=/opt/amd/bin
+AMDPHDRS_DIR=/opt/rocm/bin
 
 git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
 cd LLVM-AMDGPU-Assembler-Extra 
@@ -115,7 +112,7 @@ cd ../..
 #MY_LLVM_BIN=$(readlink -f llvm/build/bin)
 MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
-
+HCC_INSTALL_PATH=/opt/rocm/hcc
 git clone $HCC_DRIVER
 cd hcc
 git checkout $HCC_DRIVER_CHECKOUT
@@ -125,6 +122,7 @@ mkdir build
 cd build
 
 cmake ../hcc \
+-DCMAKE_INSTALL_PREFIX=$HCC_INSTALL_PATH \
 -DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
 -DNUM_BUILD_THREADS=$NUM_THREADS \
 -DHSA_USE_AMDGPU_BACKEND=ON \
