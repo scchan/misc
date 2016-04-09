@@ -112,7 +112,7 @@ cd ../..
 #MY_LLVM_BIN=$(readlink -f llvm/build/bin)
 MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
-HCC_INSTALL_PATH=/opt/rocm/hcc
+HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 git clone $HCC_DRIVER
 cd hcc
 git checkout $HCC_DRIVER_CHECKOUT

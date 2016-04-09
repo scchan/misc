@@ -49,7 +49,7 @@ mkdir build
 cd build
 
 CMAKE_BUILD_TYPE=$BUILD
-HCC_INSTALL_PATH=/opt/rocm/hcc-hlc
+HCC_INSTALL_PATH=/opt/rocm/hcc-hsail
 
 cmake ../src \
       -DCMAKE_INSTALL_PREFIX=$HCC_INSTALL_PATH \
