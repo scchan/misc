@@ -20,6 +20,8 @@ CXXAMP_ENABLE_BOLT="OFF"
 HCC_RUNTIME_CFLAGS=""
 PROJECT_GENERATORS="Unix Makefiles"
 
+DEBUG_CMAKE=""
+
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
   --threads) NUM_BUILD_THREADS="$2";;
@@ -31,6 +33,7 @@ while [[ "$#" > 0 ]]; do case $1 in
   --arch) HSA_AMDGPU_GPU_TARGET="$2";;
   --bolt) CXXAMP_ENABLE_BOLT="ON";;
   --debug_rt) HCC_RUNTIME_CFLAGS+=-g;;
+  --debug_cmake) DEBUG_CMAKE="--debug-output";;
   --eclipse) 
       PROJECT_GENERATORS="Eclipse CDT4 - Unix Makefiles"
       ;;
@@ -53,6 +56,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --debug_rt"
      echo "  --eclipse"
      echo "  --roc-1.0"
+     echo "  --debug_cmake"
      echo "  --help"
      exit
      ;;
@@ -89,7 +93,7 @@ LC_INSTALL_PATH=/opt/rocm/llvm
 cd llvm
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
+cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
 make -j $NUM_THREADS
 sudo make install
 cd ../..
@@ -121,7 +125,7 @@ cd ..
 mkdir build
 cd build
 
-cmake ../hcc \
+cmake $DEBUG_CMAKE  ../hcc \
 -DCMAKE_INSTALL_PREFIX=$HCC_INSTALL_PATH \
 -DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
 -DNUM_BUILD_THREADS=$NUM_THREADS \
