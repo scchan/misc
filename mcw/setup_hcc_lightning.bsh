@@ -15,12 +15,16 @@ LIGHTNING_CHECKOUT="master"
 
 LLD_CHECKOUT="master"
 HCC_DRIVER_CHECKOUT="master"
+
+AMDPHDRS_CHECKOUT="master"
+
 HSA_AMDGPU_GPU_TARGET=fiji
 CXXAMP_ENABLE_BOLT="OFF" 
 HCC_RUNTIME_CFLAGS=""
 PROJECT_GENERATORS="Unix Makefiles"
 
 DEBUG_CMAKE=""
+SKIP_HCC_CHECKOUT=0
 
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
@@ -33,7 +37,6 @@ while [[ "$#" > 0 ]]; do case $1 in
   --arch) HSA_AMDGPU_GPU_TARGET="$2";;
   --bolt) CXXAMP_ENABLE_BOLT="ON";;
   --debug_rt) HCC_RUNTIME_CFLAGS+=-g;;
-  --debug_cmake) DEBUG_CMAKE="--debug-output";;
   --eclipse) 
       PROJECT_GENERATORS="Eclipse CDT4 - Unix Makefiles"
       ;;
@@ -41,7 +44,10 @@ while [[ "$#" > 0 ]]; do case $1 in
       LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
       LIGHTNING_CHECKOUT="roc-1.0"
       HCC_DRIVER_CHECKOUT="roc-1.0"
+      AMDPHDRS_CHECKOUT="7187c4f8e6f7bea5c9dcaf8a7010e1fa657d728e"
       ;;
+  --debug_cmake) DEBUG_CMAKE="--debug-output";;
+  --skip_hcc_checkout) SKIP_HCC_CHECKOUT=1;;
   --help) 
      echo "options: "
      echo "  --build <Release|Debug>"
@@ -57,6 +63,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --eclipse"
      echo "  --roc-1.0"
      echo "  --debug_cmake"
+     echo "  --skip_hcc_checkout"
      echo "  --help"
      exit
      ;;
@@ -102,7 +109,8 @@ cd ../..
 AMDPHDRS_DIR=/opt/rocm/bin
 
 git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
-cd LLVM-AMDGPU-Assembler-Extra 
+cd LLVM-AMDGPU-Assembler-Extra
+git checkout $AMDPHDRS_CHECKOUT
 mkdir build
 cd build
 cmake  -DLLVM_DIR=../llvm/build  ..
@@ -117,10 +125,14 @@ cd ../..
 MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 HCC_INSTALL_PATH=/opt/rocm/hcc-lc
-git clone $HCC_DRIVER
-cd hcc
-git checkout $HCC_DRIVER_CHECKOUT
-cd ..
+
+if [ $SKIP_HCC_CHECKOUT -eq 0 ]
+then 
+  git clone $HCC_DRIVER
+  cd hcc
+  git checkout $HCC_DRIVER_CHECKOUT
+  cd ..
+fi
 
 mkdir build
 cd build
