@@ -1,0 +1,20 @@
+#!/bin/bash
+
+CLOCK=auto
+CARD=0
+
+while [[ "$#" > 0 ]]; do case $1 in
+  --clock) CLOCK="$2";;
+  --card)  CARD="$2";;
+  --help)
+        echo "options: "
+        echo "  --clock <auto|high>"
+        echo "  --card <card number>"
+        echo "  --help"
+        exit
+        ;;
+  esac; shift
+done
+
+
+echo $CLOCK|tee /sys/class/drm/card$CARD/device/power_dpm_force_performance_level
