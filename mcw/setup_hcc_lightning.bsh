@@ -5,6 +5,8 @@ NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
 
 HCC_DRIVER=https://github.com/RadeonOpenCompute/hcc.git
+HCC_DRIVER_CHECKOUT="master"
+
 CLANG_URL=https://github.com/RadeonOpenCompute/hcc-clang.git
 
 SCCHAN_HCC_DRIVER="https://github.com/scchan/hcc.git"
@@ -13,8 +15,8 @@ SCCHAN_CLANG_URL="https://github.com/scchan/hcc-clang.git"
 LIGHTNING="https://github.com/llvm-mirror/llvm.git"
 LIGHTNING_CHECKOUT="master"
 
+LLD="https://github.com/llvm-mirror/lld.git"
 LLD_CHECKOUT="master"
-HCC_DRIVER_CHECKOUT="master"
 
 AMDPHDRS_CHECKOUT="master"
 
@@ -40,12 +42,21 @@ while [[ "$#" > 0 ]]; do case $1 in
   --eclipse) 
       PROJECT_GENERATORS="Eclipse CDT4 - Unix Makefiles"
       ;;
+
   --roc-1.0)
       LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
       LIGHTNING_CHECKOUT="roc-1.0"
       HCC_DRIVER_CHECKOUT="roc-1.0"
       AMDPHDRS_CHECKOUT="7187c4f8e6f7bea5c9dcaf8a7010e1fa657d728e"
       ;;
+
+  --roc-1.1)
+      #LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
+      #LIGHTNING_CHECKOUT="roc-1.0"
+      HCC_DRIVER_CHECKOUT="roc-1.1.x"
+      #AMDPHDRS_CHECKOUT="7187c4f8e6f7bea5c9dcaf8a7010e1fa657d728e"
+      ;;
+
   --debug_cmake) DEBUG_CMAKE="--debug-output";;
   --skip_hcc_checkout) SKIP_HCC_CHECKOUT=1;;
   --help) 
@@ -62,6 +73,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --debug_rt"
      echo "  --eclipse"
      echo "  --roc-1.0"
+     echo "  --roc-1.1"
      echo "  --debug_cmake"
      echo "  --skip_hcc_checkout"
      echo "  --help"
@@ -80,18 +92,16 @@ git checkout $LIGHTNING_CHECKOUT
 cd ..
 
 # lld
-#cd llvm/tools
-#git clone https://github.com/llvm-mirror/lld.git
-#cd lld
-#git checkout $LLD_CHECKOUT
-#cd ..
+cd llvm/tools
+git clone https://github.com/llvm-mirror/lld.git
+cd lld
+git checkout $LLD_CHECKOUT
+cd ..
 
 # plain vanilla clang
 #git clone https://github.com/llvm-mirror/clang.git
 
-#cd ../..
-
-
+cd ../..
 
 #build llvm,lld,clang
 
