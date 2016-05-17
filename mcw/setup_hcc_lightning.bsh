@@ -27,6 +27,7 @@ PROJECT_GENERATORS="Unix Makefiles"
 
 DEBUG_CMAKE=""
 SKIP_HCC_CHECKOUT=0
+BUILD_AMDPDDRS=0
 
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
@@ -48,12 +49,17 @@ while [[ "$#" > 0 ]]; do case $1 in
       LIGHTNING_CHECKOUT="roc-1.0"
       HCC_DRIVER_CHECKOUT="roc-1.0"
       AMDPHDRS_CHECKOUT="7187c4f8e6f7bea5c9dcaf8a7010e1fa657d728e"
+      BUILD_AMDPDDRS=1
       ;;
 
   --roc-1.1)
-      #LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
-      #LIGHTNING_CHECKOUT="roc-1.0"
+      LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
+      LIGHTNING_CHECKOUT="roc-1.1.x"
       HCC_DRIVER_CHECKOUT="roc-1.1.x"
+
+      LLD="https://github.com/RadeonOpenCompute/lld.git"
+      LLD_CHECKOUT="roc-1.1.x"
+
       #AMDPHDRS_CHECKOUT="7187c4f8e6f7bea5c9dcaf8a7010e1fa657d728e"
       ;;
 
@@ -93,7 +99,7 @@ cd ..
 
 # lld
 cd llvm/tools
-git clone https://github.com/llvm-mirror/lld.git
+git clone $LLD
 cd lld
 git checkout $LLD_CHECKOUT
 cd ..
@@ -118,17 +124,19 @@ cd ../..
 
 AMDPHDRS_DIR=/opt/rocm/bin
 
-git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
-cd LLVM-AMDGPU-Assembler-Extra
-git checkout $AMDPHDRS_CHECKOUT
-mkdir build
-cd build
-cmake  -DLLVM_DIR=../llvm/build  ..
-make -j  $NUM_THREADS
-sudo mkdir -p $AMDPHDRS_DIR
-sudo cp -f amdphdrs/amdphdrs $AMDPHDRS_DIR
-cd ../..
-
+if [ $BUILD_AMDPDDRS -eq 1 ]
+then
+  git clone https://github.com/RadeonOpenCompute/LLVM-AMDGPU-Assembler-Extra.git
+  cd LLVM-AMDGPU-Assembler-Extra
+  git checkout $AMDPHDRS_CHECKOUT
+  mkdir build
+  cd build
+  cmake  -DLLVM_DIR=../llvm/build  ..
+  make -j  $NUM_THREADS
+  sudo mkdir -p $AMDPHDRS_DIR
+  sudo cp -f amdphdrs/amdphdrs $AMDPHDRS_DIR
+  cd ../..
+fi
 
 # build hcc with lightning
 #MY_LLVM_BIN=$(readlink -f llvm/build/bin)
