@@ -118,7 +118,7 @@ mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
 make -j $NUM_THREADS
-sudo make install
+#sudo make install
 cd ../..
 
 
@@ -139,8 +139,8 @@ then
 fi
 
 # build hcc with lightning
-#MY_LLVM_BIN=$(readlink -f llvm/build/bin)
-MY_LLVM_BIN=$LC_INSTALL_PATH/bin
+MY_LLVM_BIN=$(readlink -f llvm/build/bin)
+#MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 
