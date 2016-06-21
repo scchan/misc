@@ -121,7 +121,7 @@ mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
 make -j $NUM_THREADS
-sudo make install
+#sudo make install
 cd ../..
 
 
