@@ -9,8 +9,8 @@ HCC_DRIVER_CHECKOUT="master"
 
 CLANG_URL=https://github.com/RadeonOpenCompute/hcc-clang.git
 
-SCCHAN_HCC_DRIVER="https://github.com/scchan/hcc.git"
-SCCHAN_CLANG_URL="https://github.com/scchan/hcc-clang.git"
+SCCHAN_HCC_DRIVER="git@github.com:scchan/hcc.git"
+SCCHAN_CLANG_URL="git@github.com:scchan/hcc-clang.git"
 
 LIGHTNING="https://github.com/llvm-mirror/llvm.git"
 LIGHTNING_CHECKOUT="master"
@@ -33,7 +33,10 @@ while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
   --threads) NUM_BUILD_THREADS="$2";;
   --hcc) HCC_DRIVER="$2";;
-  --scc_hcc) HCC_DRIVER=$SCCHAN_HCC_DRIVER;;
+  --scc_hcc) 
+      HCC_DRIVER=$SCCHAN_HCC_DRIVER
+      CLANG_URL=$SCCHAN_CLANG_URL
+      ;;
   --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
   --llvm_checkout) LLVM_CHECKOUT="$2";;
   --lld_checkout) LLD_CHECKOUT="$2";;
@@ -139,8 +142,8 @@ then
 fi
 
 # build hcc with lightning
-#MY_LLVM_BIN=$(readlink -f llvm/build/bin)
-MY_LLVM_BIN=$LC_INSTALL_PATH/bin
+MY_LLVM_BIN=$(readlink -f llvm/build/bin)
+#MY_LLVM_BIN=$LC_INSTALL_PATH/bin
 
 HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 
@@ -164,8 +167,9 @@ cmake $DEBUG_CMAKE  ../hcc \
 -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
 -DHCC_RUNTIME_CFLAGS=\"$HCC_RUNTIME_CFLAGS\" \
 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
--G"$PROJECT_GENERATORS" \
--DAMDPHDRS_DIR=$AMDPHDRS_DIR
+-G"$PROJECT_GENERATORS" 
+
+#-DAMDPHDRS_DIR=$AMDPHDRS_DIR
 
 
 #-DHSA_LIBRARY=$MY_HSA_LIB \
