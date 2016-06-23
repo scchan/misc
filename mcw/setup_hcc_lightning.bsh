@@ -66,6 +66,17 @@ while [[ "$#" > 0 ]]; do case $1 in
       #AMDPHDRS_CHECKOUT="7187c4f8e6f7bea5c9dcaf8a7010e1fa657d728e"
       ;;
 
+  --roc-1.1.x)
+      LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
+      LIGHTNING_CHECKOUT="roc-1.1.x"
+
+      LLD="https://github.com/RadeonOpenCompute/lld.git"
+      LLD_CHECKOUT="roc-1.1.x"
+      HCC_DRIVER_CHECKOUT="roc-1.1.x"
+
+
+      ;;
+
   --debug_cmake) DEBUG_CMAKE="--debug-output";;
   --skip_hcc_checkout) SKIP_HCC_CHECKOUT=1;;
   --help) 
@@ -83,6 +94,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --eclipse"
      echo "  --roc-1.0"
      echo "  --roc-1.1"
+     echo "  --roc-1.1.x"
      echo "  --debug_cmake"
      echo "  --skip_hcc_checkout"
      echo "  --help"
@@ -95,22 +107,30 @@ done
 echo "hcc: $HCC_DRIVER"
 echo "hcc-clang: $CLANG_URL"
 
-git clone $LIGHTNING
-cd llvm
-git checkout $LIGHTNING_CHECKOUT
-cd ..
+
+if [ ! -d "./llvm" ]; then
+  git clone $LIGHTNING
+  cd llvm
+  git checkout $LIGHTNING_CHECKOUT
+  cd ..
+else
+  echo "llvm directory already exists, skipping llvm checkout..."
+fi
 
 # lld
-cd llvm/tools
-git clone $LLD
-cd lld
-git checkout $LLD_CHECKOUT
-cd ..
+if [ ! -d "./llvm/tools/lld" ]; then
+  cd llvm/tools
+  git clone $LLD
+  cd lld
+  git checkout $LLD_CHECKOUT
+  cd ../../..
+else
+  echo "llvm directory already exists, skipping llvm checkout..."
+fi
 
 # plain vanilla clang
 #git clone https://github.com/llvm-mirror/clang.git
 
-cd ../..
 
 #build llvm,lld,clang
 
