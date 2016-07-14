@@ -74,8 +74,19 @@ while [[ "$#" > 0 ]]; do case $1 in
       LLD_CHECKOUT="roc-1.1.x"
       HCC_DRIVER_CHECKOUT="roc-1.1.x"
 
+      ;;
+
+
+  --roc-1.2.x)
+      LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
+      LIGHTNING_CHECKOUT="amd-common"
+
+      LLD="https://github.com/RadeonOpenCompute/lld.git"
+      LLD_CHECKOUT="amd-common"
+      HCC_DRIVER_CHECKOUT="roc-1.2.x"
 
       ;;
+
 
   --debug_cmake) DEBUG_CMAKE="--debug-output";;
   --skip_hcc_checkout) SKIP_HCC_CHECKOUT=1;;
