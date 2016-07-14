@@ -106,6 +106,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --roc-1.0"
      echo "  --roc-1.1"
      echo "  --roc-1.1.x"
+     echo "  --roc-1.2.x"
      echo "  --debug_cmake"
      echo "  --skip_hcc_checkout"
      echo "  --help"
