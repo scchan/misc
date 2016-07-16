@@ -79,10 +79,10 @@ while [[ "$#" > 0 ]]; do case $1 in
 
   --roc-1.2.x)
       LIGHTNING="https://github.com/RadeonOpenCompute/llvm.git"
-      LIGHTNING_CHECKOUT="amd-common"
+      LIGHTNING_CHECKOUT="roc-1.2.x"
 
       LLD="https://github.com/RadeonOpenCompute/lld.git"
-      LLD_CHECKOUT="amd-common"
+      LLD_CHECKOUT="roc-1.2.x"
       HCC_DRIVER_CHECKOUT="roc-1.2.x"
 
       ;;
