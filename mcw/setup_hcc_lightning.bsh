@@ -25,7 +25,7 @@ LIGHTNING_CHECKOUT="amd-common"
 LLD="https://github.com/RadeonOpenCompute/lld.git"
 LLD_CHECKOUT="amd-common"
  
-
+BUILD_PACKAGE=0
 
 AMDPHDRS_CHECKOUT="master"
 
@@ -54,6 +54,10 @@ while [[ "$#" > 0 ]]; do case $1 in
   --debug_rt) HCC_RUNTIME_CFLAGS+=-g;;
   --eclipse) 
       PROJECT_GENERATORS="Eclipse CDT4 - Unix Makefiles"
+      ;;
+
+  --package)
+      BUILD_PACKAGE=1
       ;;
 
   --roc-1.0)
@@ -220,4 +224,9 @@ cmake $DEBUG_CMAKE  ../hcc \
 make -j $NUM_THREADS world
 make -j $NUM_THREADS
 
+
+if [ $BUILD_PACKAGE -eq 1 ]
+then 
+  make package
+fi
 
