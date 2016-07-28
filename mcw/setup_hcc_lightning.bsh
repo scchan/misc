@@ -116,6 +116,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --bolt <ON|OFF>"
      echo "  --debug_rt"
      echo "  --eclipse"
+     echo "  --package"
      echo "  --roc-1.0"
      echo "  --roc-1.1"
      echo "  --roc-1.1.x"
