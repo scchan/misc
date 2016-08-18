@@ -1,16 +1,15 @@
 #!/bin/bash
 
 
-if [[ $# -ne 2 ]]
-then
-  echo "Usage: docker-nc <image_name> <container_name>
+if [[ "$#" != 2 ]]; then
+  echo "Usage: docker-nc <image_name> <container_name>"
   exit
 fi
 
 IMAGE=$1
 CONTAINER=$2
 
-docker run --privileged -ti --expose 22 -P --name $CONTAINER  $IMAGE
+docker run --privileged -tid --expose 22 -P --name $CONTAINER  $IMAGE
 docker-sshd.ubuntu $CONTAINER
 docker port $CONTAINER
 
