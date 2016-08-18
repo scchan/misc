@@ -38,6 +38,8 @@ DEBUG_CMAKE=""
 SKIP_HCC_CHECKOUT=0
 BUILD_AMDPDDRS=0
 
+CLANG_TOT=0
+
 while [[ "$#" > 0 ]]; do case $1 in
   --build)  CMAKE_BUILD_TYPE="$2";;
   --threads) NUM_BUILD_THREADS="$2";;
@@ -45,6 +47,9 @@ while [[ "$#" > 0 ]]; do case $1 in
   --scc_hcc) 
       HCC_DRIVER=$SCCHAN_HCC_DRIVER
       CLANG_URL=$SCCHAN_CLANG_URL
+      ;;
+  --hcc_tot)
+      CLANG_TOT=1
       ;;
   --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
   --llvm_checkout) LLVM_CHECKOUT="$2";;
@@ -109,6 +114,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --threads <threads>"
      echo "  --hcc <git url for hcc driver>"
      echo "  --scc_hcc"
+     echo "  --hcc_tot"
      echo "  --hcc_checkout <branch>"
      echo "  --llvm_checkout <LC branch>"
      echo "  --lld_checkout <lld branch>"
@@ -195,10 +201,15 @@ HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 
 if [ $SKIP_HCC_CHECKOUT -eq 0 ]
 then 
-  git clone $HCC_DRIVER
-  cd hcc
-  git checkout $HCC_DRIVER_CHECKOUT
-  cd ..
+  if [ $CLANG_TOT -eq 0 ]
+  then
+    git clone --recursive -b clang_tot_upgrade git@github.com:RadeonOpenCompute/hcc.git
+  else
+    git clone $HCC_DRIVER
+    cd hcc
+    git checkout $HCC_DRIVER_CHECKOUT
+    cd ..
+  fi
 fi
 
 mkdir build
