@@ -204,7 +204,7 @@ HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 
 if [ $SKIP_HCC_CHECKOUT -eq 0 ]
 then 
-  if [ $CLANG_TOT -eq 0 ]
+  if [ $CLANG_TOT -ne 0 ]
   then
     git clone --recursive -b clang_tot_upgrade git@github.com:RadeonOpenCompute/hcc.git
   else
