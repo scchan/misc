@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
 
@@ -214,7 +216,7 @@ MY_LLVM_BIN=$(readlink -f llvm/build/bin)
 
 HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 
-DEVICE_LIB_DIR=/opt/rocm/device-libs
+DEVICE_LIB_DIR=/opt/rocm/
 
 if [ $SKIP_HCC_CHECKOUT -eq 0 ]
 then 
@@ -227,16 +229,18 @@ then
     mkdir build
     cd build
 
-    LLVM_BUILD=../../llvm/build/
+    LLVM_BUILD=$(readlink -f ../../llvm/build/)
     HSA_DIR=/opt/rocm/hsa
     DEVICE_LIB_DIR=/opt/rocm/device-libs
 
-    CC=$LLVM_BUILD/bin/clang cmake -DLLVM_DIR=$LLVM_BUILD -DAMDHSACOD=$HSA_DIR/bin/x86_64/amdhsacod -DCMAKE_INSTALL_PREFIX=$DEVICE_LIB_DIR ..
-    make -j8
-    sudo make install
+    CC=$LLVM_BUILD/bin/clang cmake -DLLVM_DIR=$LLVM_BUILD -DAMDHSACOD=$HSA_DIR/bin/x86_64/amdhsacod  ..
+    make -j $NUM_THREADS
+    make package
+    sudo dpkg -i *deb
+
+   # sudo make install
+
     cd ../..
-
-
    
     git clone --recursive -b clang_tot_upgrade git@github.com:RadeonOpenCompute/hcc.git
   else
