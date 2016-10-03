@@ -23,6 +23,9 @@ LIGHTNING_CHECKOUT="amd-common"
 
 LLD="https://github.com/RadeonOpenCompute/lld.git"
 LLD_CHECKOUT="amd-common"
+
+CLANG="https://github.com/RadeonOpenCompute/clang.git"
+CLANG_CHECKOUT="amd-common"
  
 BUILD_PACKAGE=0
 
@@ -161,6 +164,17 @@ else
   echo "llvm directory already exists, skipping llvm checkout..."
 fi
 
+# clang
+if [ ! -d "./llvm/tools/clang" ]; then
+  cd llvm/tools
+  git clone $CLANG
+  cd clang
+  git checkout $CLANG_CHECKOUT
+  cd ../../..
+else
+  echo "llvm directory already exists, skipping llvm checkout..."
+fi
+
 # plain vanilla clang
 #git clone https://github.com/llvm-mirror/clang.git
 
@@ -200,10 +214,30 @@ MY_LLVM_BIN=$(readlink -f llvm/build/bin)
 
 HCC_INSTALL_PATH=/opt/rocm/hcc-lc
 
+DEVICE_LIB_DIR=/opt/rocm/device-libs
+
 if [ $SKIP_HCC_CHECKOUT -eq 0 ]
 then 
   if [ $CLANG_TOT -ne 0 ]
   then
+
+    # build ROCm-Device-Libs
+    git clone https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
+    cd ROCm-Device-Libs
+    mkdir build
+    cd build
+
+    LLVM_BUILD=../../llvm/build/
+    HSA_DIR=/opt/rocm/hsa
+    DEVICE_LIB_DIR=/opt/rocm/device-libs
+
+    CC=$LLVM_BUILD/bin/clang cmake -DLLVM_DIR=$LLVM_BUILD -DAMDHSACOD=$HSA_DIR/bin/x86_64/amdhsacod -DCMAKE_INSTALL_PREFIX=$DEVICE_LIB_DIR ..
+    make -j8
+    sudo make install
+    cd ../..
+
+
+   
     git clone --recursive -b clang_tot_upgrade git@github.com:RadeonOpenCompute/hcc.git
   else
     git clone $HCC_DRIVER
@@ -216,6 +250,23 @@ fi
 mkdir build
 cd build
 
+if [ $CLANG_TOT -ne 0 ]
+then
+
+cmake $DEBUG_CMAKE  ../hcc \
+-DCMAKE_INSTALL_PREFIX=$HCC_INSTALL_PATH \
+-DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
+-DNUM_BUILD_THREADS=$NUM_THREADS \
+-DHSA_USE_AMDGPU_BACKEND=ON \
+-DHSA_LLVM_BIN_DIR=$MY_LLVM_BIN \
+-DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
+-DHCC_RUNTIME_DEBUG=$HCC_RUNTIME_DEBUG \
+-DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+-G"$PROJECT_GENERATORS" \
+-DROCM_DEVICE_LIB_DIR=$DEVICE_LIB_DIR/lib
+
+else
+
 cmake $DEBUG_CMAKE  ../hcc \
 -DCMAKE_INSTALL_PREFIX=$HCC_INSTALL_PATH \
 -DCXXAMP_ENABLE_BOLT=$CXXAMP_ENABLE_BOLT \
@@ -226,6 +277,9 @@ cmake $DEBUG_CMAKE  ../hcc \
 -DHCC_RUNTIME_DEBUG=$HCC_RUNTIME_DEBUG \
 -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
 -G"$PROJECT_GENERATORS" 
+
+fi
+
 
 #-DAMDPHDRS_DIR=$AMDPHDRS_DIR
 
