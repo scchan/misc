@@ -113,6 +113,12 @@ while [[ "$#" > 0 ]]; do case $1 in
 
       ;;
 
+  --roc-1.3.x)
+      LIGHTNING_CHECKOUT="roc-1.3.x"
+      LLD_CHECKOUT="roc-1.3.x"
+      HCC_DRIVER_CHECKOUT="roc-1.3.x"
+      CLANG_CHECKOUT="roc-1.3.x"
+      ;;
 
   --debug_cmake) DEBUG_CMAKE="--debug-output";;
   --skip_hcc_checkout) SKIP_HCC_CHECKOUT=1;;
@@ -135,6 +141,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --roc-1.1"
      echo "  --roc-1.1.x"
      echo "  --roc-1.2.x"
+     echo "  --roc-1.3.x"
      echo "  --debug_cmake"
      echo "  --skip_hcc_checkout"
      echo "  --help"
