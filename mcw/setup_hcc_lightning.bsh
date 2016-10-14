@@ -55,6 +55,8 @@ while [[ "$#" > 0 ]]; do case $1 in
       CLANG_URL=$SCCHAN_CLANG_URL
       ;;
   --hcc_tot)
+      LLD_CHECKOUT="amd-hcc"
+      LIGHTNING_CHECKOUT="amd-hcc"
       CLANG_TOT=1
       ;;
   --hcc_checkout) HCC_DRIVER_CHECKOUT="$2";;
