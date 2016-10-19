@@ -46,6 +46,9 @@ BUILD_AMDPDDRS=0
 
 CLANG_TOT=0
 
+
+BUILD_DEVICE_LIB=0
+
 BUILD_LC_ONLY=0
 BUILD_HCC_ONLY=0
 
@@ -129,6 +132,7 @@ while [[ "$#" > 0 ]]; do case $1 in
   --skip_hcc_checkout) SKIP_HCC_CHECKOUT=1;;
   --build_lc_only) BUILD_LC_ONLY=1;;
   --build_hcc_only) BUILD_HCC_ONLY=1;;
+  --build_device_lib) BUILD_DEVICE_LIB=1;;
 
   --help) 
      echo "options: "
@@ -154,6 +158,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --skip_hcc_checkout"
      echo "  --build_lc_only"
      echo "  --build_hcc_only"
+     echo "  --build_device_lib"
      echo "  --help"
      exit
      ;;
@@ -188,16 +193,6 @@ else
   echo "llvm directory already exists, skipping llvm checkout..."
 fi
 
-# clang
-if [ ! -d "./llvm/tools/clang" ]; then
-  cd llvm/tools
-  git clone $CLANG
-  cd clang
-  git checkout $CLANG_CHECKOUT
-  cd ../../..
-else
-  echo "llvm directory already exists, skipping llvm checkout..."
-fi
 
 # plain vanilla clang
 #git clone https://github.com/llvm-mirror/clang.git
@@ -252,25 +247,72 @@ then
   if [ $CLANG_TOT -ne 0 ]
   then
 
-    # build ROCm-Device-Libs
-    git clone https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
-    cd ROCm-Device-Libs
-    mkdir build
-    cd build
 
-    LLVM_BUILD=$(readlink -f ../../llvm/build/)
-    HSA_DIR=/opt/rocm/hsa
-    DEVICE_LIB_DIR=/opt/rocm/device-libs
+ 
+   if [ $SKIP_HCC_CHECKOUT -eq 0 ]
+   then 
 
-    CC=$LLVM_BUILD/bin/clang cmake -DLLVM_DIR=$LLVM_BUILD -DAMDHSACOD=$HSA_DIR/bin/x86_64/amdhsacod  ..
-    make -j $NUM_THREADS
-    make package
-    sudo dpkg -i *deb
+      mkdir device-lib
+      cd device-lib
 
-   # sudo make install
+      if [ ! -d "./llvm" ]; then
+        git clone $LIGHTNING
+        cd llvm
+        git checkout amd-common
+        cd ..
+      else
+        echo "llvm directory already exists, skipping llvm checkout..."
+      fi
 
+      # lld
+      if [ ! -d "./llvm/tools/lld" ]; then
+        cd llvm/tools
+        git clone $LLD
+        cd lld
+        git checkout amd-common
+        cd ../../..
+      else
+        echo "llvm directory already exists, skipping llvm checkout..."
+      fi
+
+
+      # clang
+      if [ ! -d "./llvm/tools/clang" ]; then
+        cd llvm/tools
+        git clone $CLANG
+        cd clang
+        git checkout amd-common
+        cd ../../..
+      else
+        echo "llvm directory already exists, skipping llvm checkout..."
+      fi
+
+      mkdir -p llvm/build
+      cd llvm/build
+      cmake -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
+      make -j $NUM_BUILD_THREADS
+      cd ../..
+
+      # build ROCm-Device-Libs
+      git clone https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git
+      cd ROCm-Device-Libs
+      mkdir build
+      cd build
+
+      LLVM_BUILD=$(readlink -f ../../llvm/build/)
+      HSA_DIR=/opt/rocm/hsa
+      DEVICE_LIB_DIR=/opt/rocm/device-libs
+
+      CC=$LLVM_BUILD/bin/clang cmake -DLLVM_DIR=$LLVM_BUILD -DAMDHSACOD=$HSA_DIR/bin/x86_64/amdhsacod  ..
+      make -j $NUM_THREADS
+      make package
+      sudo dpkg -i *deb
+
+      cd ..
+    fi
+
+    # sudo make install
     cd ../..
-   
     git clone --recursive -b clang_tot_upgrade git@github.com:RadeonOpenCompute/hcc.git
   else
     git clone $HCC_DRIVER
