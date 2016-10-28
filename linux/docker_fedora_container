@@ -1,5 +1,16 @@
-
 Note for running a Fedora container
+
+
+To add extra option to the Docker daemon
+
+1- Open "/usr/lib/systemd/system/docker.service"
+2- Change the line with ExecStart= into
+
+# container size 30GB, docker image store in /home/docker/docker instead of /var/lib/docker
+ExecStart=/usr/bin/docker daemon -g /home/docker/docker --storage-opt dm.basesize=30G
+
+
+
 
 Problem: 
 Starting an sshd will get an "Failed to get D-Bus connection: No connection to service manager." error

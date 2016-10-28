@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -x
+set -x
 
 NUM_THREADS=32
 CMAKE_BUILD_TYPE=Release
@@ -30,6 +30,8 @@ CLANG="https://github.com/RadeonOpenCompute/clang.git"
 CLANG_CHECKOUT="amd-common"
  
 BUILD_PACKAGE=0
+
+DISTRO=ubuntu
 
 AMDPHDRS_CHECKOUT="master"
 
@@ -135,6 +137,8 @@ while [[ "$#" > 0 ]]; do case $1 in
   --build_hcc_only) BUILD_HCC_ONLY=1;;
   --build_device_lib) BUILD_DEVICE_LIB=1;;
 
+  --fedora)DISTRO=fedora;;
+
   --help) 
      echo "options: "
      echo "  --build <Release|Debug>"
@@ -160,6 +164,7 @@ while [[ "$#" > 0 ]]; do case $1 in
      echo "  --build_lc_only"
      echo "  --build_hcc_only"
      echo "  --build_device_lib"
+     echo "  --fedora"
      echo "  --help"
      exit
      ;;
@@ -206,7 +211,11 @@ LC_INSTALL_PATH=/opt/rocm/llvm
 cd llvm
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
+
+#cmake -DCMAKE_INSTALL_PREFIX=$LC_INSTALL_PATH -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
+
+cmake -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ..
+
 make -j $NUM_THREADS
 #sudo make install
 cd ../..
@@ -329,6 +338,7 @@ then
      -DHCC_RUNTIME_DEBUG=$HCC_RUNTIME_DEBUG \
      -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
      -G"$PROJECT_GENERATORS" \
+     -DDISTRO=$DISTRO \
      -DROCM_DEVICE_LIB_DIR=$DEVICE_LIB_DIR/lib
 
 else
@@ -354,6 +364,7 @@ else
     -DHSA_AMDGPU_GPU_TARGET=$HSA_AMDGPU_GPU_TARGET \
     -DHCC_RUNTIME_DEBUG=$HCC_RUNTIME_DEBUG \
     -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+    -DDISTRO=$DISTRO \
     -G"$PROJECT_GENERATORS" 
 fi
 

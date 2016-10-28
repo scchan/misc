@@ -1,3 +1,9 @@
 
+build libc++ and libc++abi from source
+make install (installed to /usr/local by default)
+ensure that /usr/local/lib and /opt/rocm/lib are in the library search path
 
-sudo dnf install cmake git subversion gcc-c++ libstdc++-devel libdwarf-devel elfutils-libelf-devel llvm llvm-devel  re2c ncurses-devel patch wget file
+sudo dnf install cmake git subversion gcc-c++ libstdc++-devel libdwarf-devel elfutils-libelf-devel llvm llvm-devel  re2c ncurses-devel patch wget file tar xz  glibc-devel.i686 python rpmdevtools
+
+// hip needs the static libstdc++
+sudo dnf install libstdc++-static
