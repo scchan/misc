@@ -1,3 +1,19 @@
 
+
+For Ubuntu 14.04
+
 In /etc/default/docker
-Add DOCKER_OPTS=" --storage-opt dm.basesize=20G" to change the container from 10GB to 20GB
+Add DOCKER_OPTS=" --storage-opt dm.basesize=30G" to change the container from 10GB to 30GB
+
+
+For Ubuntu 16.04 (systemd)
+In /lib/systemd/system/docker.service 
+Add --storage-opt dm.basesize=30G to the end of ExecStart:
+
+i.e. ExecStart=/usr/bin/dockerd -H fd:// --storage-opt dm.basesize=30G
+
+Remove everything in /var/lib/docker/ except perhaps /var/lib/docker/devicemapper/devicemapper/data if the docker volume size has been adjusted
+(see the create_docker_volume_size script)
+
+Restart docker
+Do a "docker info" and check whether the "Base Device Size" gets the new size setting
