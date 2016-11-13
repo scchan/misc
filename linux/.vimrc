@@ -38,7 +38,7 @@ hi CursorLine cterm=NONE ctermbg=darkred ctermfg=white
 if has('gui_running')
   colorscheme desert
   set guioptions-=T
-  set guifont=ProggySquareTTSZ\ 12
+  set guifont=Monospace\ 10
 endif
 
 
