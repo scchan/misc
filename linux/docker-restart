@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+if [[ "$#" != 1 ]]; then
+  echo "Usage: docker-restart <container_name>"
+  exit
+fi
+
+CONTAINER=$1
+
+docker start $CONTAINER 
+docker-sshd.ubuntu $CONTAINER
+docker port $CONTAINER
+
+
