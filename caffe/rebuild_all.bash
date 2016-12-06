@@ -4,10 +4,14 @@ THREADS=64
 
 
 # HIP
-cd HIP
+cd hip 
 rm -rf build
+rm -rf /opt/rocm/hip
 mkdir build
 cd build
+
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/rocm/hip -DCMAKE_BUILD_TYPE=Release
+
 make -j $THREADS
 sudo make install
 cd ../..

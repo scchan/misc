@@ -1,6 +1,6 @@
 #!/bin/bash
 
-git clone -b developer-preview https://github.com/GPUOpen-ProfessionalCompute-Tools/HIP.git 
+git clone -b amd-develop ssh://scchan@git.amd.com:29418/compute/ec/hip.git
 
 git clone https://bitbucket.org/multicoreware/hcblas.git
 
