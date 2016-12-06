@@ -6,7 +6,7 @@ THREADS=64
 # HIP
 cd hip 
 rm -rf build
-rm -rf /opt/rocm/hip
+sudo rm -rf /opt/rocm/hip
 mkdir build
 cd build
 
