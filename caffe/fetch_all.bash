@@ -6,7 +6,7 @@ git clone https://bitbucket.org/multicoreware/hcblas.git
 
 git clone -b hiprng https://bitbucket.org/multicoreware/hcrng.git
 
-git clone -b hip-hsaco  https://github.com/AMDComputeLibraries/MLOpen
+git clone -b hip-hsaco  https://github.com/AMDComputeLibraries/MLOpen.git
 
 git clone -b hip https://bitbucket.org/multicoreware/hipcaffe.git
 
