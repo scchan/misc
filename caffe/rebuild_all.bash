@@ -21,7 +21,7 @@ cd ../..
 cd hcblas
 rm -rf build
 ./build.sh
-sudo apt-get purge hcblas
+sudo apt-get -y purge hcblas
 sudo dpkg -i install build/hcblas*deb
 cd ..
 
@@ -30,7 +30,7 @@ cd ..
 cd hcrng
 rm -rf build
 ./build.sh
-sudo apt-get purge hcrng
+sudo apt-get -y purge hcrng
 sudo dpkg -i build/hcrng*deb
 cd ..
 
