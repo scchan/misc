@@ -1,0 +1,55 @@
+#!/usr/bin/perl
+use strict;
+use Sys::CpuAffinity;
+
+sub print_command {
+  my $separator = "##########################################################################\n";
+
+  print $separator;
+  print "  ";
+  print @_;
+  print "\n";
+  print $separator;
+
+}
+
+sub run_command {
+  my $command_result;
+  my $command;
+
+  $command = "@_";
+  print_command($command);
+  $command_result = `$command`;
+}
+
+my $num_cpus = Sys::CpuAffinity::getNumCpus();
+my $num_build_threads = $num_cpus * 2;
+print "Number of CPUs: $num_cpus  Number of build threads: $num_build_threads \n";
+
+my $hcc_repo_url = "https://github.com/RadeonOpenCompute/HCC-Native-GCN-ISA.git";
+my $hcc_branch = "clang_tot_upgrade";
+
+my $command;
+my $command_result;
+# get the hcc source
+$command = "repo init -u $hcc_repo_url -b $hcc_branch";
+run_command($command);
+
+$command = "repo sync";
+run_command($command);
+
+$command = "mkdir llvm/build";
+run_command($command);
+
+$command = "cd llvm/build";
+run_command($command);
+
+$command = "cmake .. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=\"AMDGPU;X86\" -DLLVM_APPEND_VC_REV=ON";
+run_command($command);
+
+$command = "make -j $num_build_threads";
+run_command($command);
+
+$command = "cd ../..";
+run_command($command);
+
