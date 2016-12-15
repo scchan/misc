@@ -1,15 +1,18 @@
 #!/usr/bin/perl
 use strict;
 use Sys::CpuAffinity;
+use Getopt::Long;
 
 sub print_command {
   my $separator = "##########################################################################\n";
 
+  print "\n";
   print $separator;
   print "  ";
   print @_;
   print "\n";
   print $separator;
+  print "\n";
 
 }
 
@@ -19,7 +22,8 @@ sub run_command {
 
   $command = "@_";
   print_command($command);
-  $command_result = `$command`;
+  #$command_result = `$command`;
+  system($command);
 }
 
 my $num_cpus = Sys::CpuAffinity::getNumCpus();
@@ -27,50 +31,46 @@ my $num_build_threads = $num_cpus * 2;
 print "Number of CPUs: $num_cpus  Number of build threads: $num_build_threads \n";
 
 my $hcc_repo_url = "https://github.com/RadeonOpenCompute/HCC-Native-GCN-ISA.git";
+my $hcc_git_url = "https://github.com/RadeonOpenCompute/hcc.git";
 my $hcc_branch = "clang_tot_upgrade";
+
+my $use_repo = '';
+my $build_device_libs = '';
+
+my $build_type = "Release";
+my $gpu_arch = "AMD:AMDGPU:8:0:3";
+my $device_lib_dir = "/opt/rocm/lib";
+my $hcc_build_dir = "build.hcc";
+
+GetOptions ("repo" => \$use_repo
+           ) or die ("Error in command line arguments\n");
 
 my $command;
 my $command_result;
 # get the hcc source
-$command = "repo init -u $hcc_repo_url -b $hcc_branch";
-run_command($command);
 
-$command = "repo sync";
-run_command($command);
+if ($use_repo) {
+  $command = "repo init -u $hcc_repo_url -b $hcc_branch";
+  run_command($command);
 
-$command = "mkdir llvm/build";
-run_command($command);
+  $command = "repo sync";
+  run_command($command);
+}
+else {
+  $command = "git clone --recursive -b $hcc_branch $hcc_git_url";
+  run_command($command);
 
-$command = "cd llvm/build";
-run_command($command);
+  run_command("mkdir $hcc_build_dir");
 
-$command = "cmake .. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=\"AMDGPU;X86\" -DLLVM_APPEND_VC_REV=ON";
-run_command($command);
+  chdir($hcc_build_dir);
+  #run_command("cd $hcc_build_dir");
 
-$command = "make -j $num_build_threads";
-run_command($command);
+  $command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir ../hcc";
+  run_command($command);
 
-$command = "cd ../..";
-run_command($command);
+  run_command("make -j $num_build_threads");
+  run_command("make package");
 
-$command = "mkdir ocml/build";
-run_command($command);
-
-$command = "cd ocml/build";
-run_command($command);
-
-$command = "export LLVM_BUILD=`pwd`/../../llvm/build";
-run_command($command);
-
-$command = "CC=$LLVM_BUILD/bin/clang cmake -DLLVM_DIR=$LLVM_BUILD -DAMDHSACOD=/opt/rocm/bin/amdhsacod .."
-run_command($command);
-
-$command = "make -j $num_build_threads";
-run_command($command);
-
-$command = "make package";
-run_command($command);
-
-$command = "cd ../..";
-run_command($command);
+  exit;
+}
 
