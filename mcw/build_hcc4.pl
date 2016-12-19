@@ -3,9 +3,21 @@ use strict;
 use Sys::CpuAffinity;
 use Getopt::Long;
 
-sub usage {
 
-  exit;
+sub print_option {
+  my ($option, $description) = @_;
+  print "  $option \t\t\t $description \n";
+}
+
+sub usage {
+  print "Options: \n\n";
+  print_option("--help", "this help message");
+  print_option("--threads <int>", "specify the number of build threads, the default is 2X number of cores");
+  print_option("--cloneonly", "clone the hcc source only, do not build the compiler");
+  print_option("--buildonly", "build the compiler with existing source, do not clone or checkout the hcc source");
+  print_option("--branch", "specify an HCC branch");
+  print_option("--package", "generate an installer package");
+  return 0;
 }
 
 
@@ -45,21 +57,32 @@ my $hcc_lld_git_ssh = "git\@github.com:RadeonOpenCompute/lld.git";
 
 my $hcc_branch = "clang_tot_upgrade";
 
+my $help = '';
 my $use_repo = '';
 my $build_device_libs = '';
 my $clone_only = '';
 my $build_only = '';
+my $package = '';
 
 my $build_type = "Release";
 my $gpu_arch = "AMD:AMDGPU:8:0:3";
 my $device_lib_dir = "/opt/rocm/lib";
 my $hcc_build_dir = "build.hcc";
 
-GetOptions ("repo" => \$use_repo
+GetOptions (
+             "help" => \$help
+#            , "repo" => \$use_repo
             ,"threads=i" => \$num_build_threads
             ,"cloneonly" => \$clone_only
             ,"buildonly" => \$build_only
-           ) or die ("Error in command line arguments\n");
+            ,"branch" => \$hcc_branch
+            ,"package" => \$package
+           ) or (usage() and die ("Error in command line arguments\n"));
+
+if ($help) {
+  usage();
+  exit(0);
+}
 
 my $command;
 
@@ -98,6 +121,8 @@ $command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_ar
 run_command($command);
 
 run_command("make -j $num_build_threads");
-run_command("make package");
 
+if ($package) {
+  run_command("make package");
+}
 
