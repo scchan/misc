@@ -12,6 +12,7 @@ sub print_option {
 sub usage {
   print "Options: \n\n";
   print_option("--help", "this help message");
+  print_option("--stdlibcpp", "use libstdc++ for C++ runtime");
   print_option("--threads <int>", "specify the number of build threads, the default is 2X number of cores");
   print_option("--cloneonly", "clone the hcc source only, do not build the compiler");
   print_option("--buildonly", "build the compiler with existing source, do not clone or checkout the hcc source");
@@ -55,6 +56,8 @@ my $hcc_clang_git_ssh = "git\@github.com:RadeonOpenCompute/hcc-clang-upgrade.git
 my $hcc_llvm_git_ssh = "git\@github.com:RadeonOpenCompute/llvm.git";
 my $hcc_lld_git_ssh = "git\@github.com:RadeonOpenCompute/lld.git";
 
+my $use_stdlibcpp = '';
+
 my $hcc_branch = "clang_tot_upgrade";
 
 my $help = '';
@@ -71,6 +74,7 @@ my $hcc_build_dir = "build.hcc";
 
 GetOptions (
              "help" => \$help
+            ,"stdlibcpp" => \$use_stdlibcpp 
 #            , "repo" => \$use_repo
             ,"threads=i" => \$num_build_threads
             ,"cloneonly" => \$clone_only
@@ -118,6 +122,14 @@ if (!$build_only) {
 run_command("mkdir $hcc_build_dir");
 chdir($hcc_build_dir);
 $command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir ../hcc";
+
+if ($use_stdlibcpp) {
+  $command = "$command -DUSE_LIBCXX=OFF";
+}
+else {
+  $command = "$command -DUSE_LIBCXX=ON";
+}
+
 run_command($command);
 
 run_command("make -j $num_build_threads");
