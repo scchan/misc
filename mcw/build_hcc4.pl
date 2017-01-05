@@ -3,6 +3,10 @@ use strict;
 use Sys::CpuAffinity;
 use Getopt::Long;
 
+# requires module Syntax::Feature::Junction
+use syntax 'junction';
+
+my @supported_distros = ("ubuntu", "fedora");
 
 sub print_option {
   my ($option, $description) = @_;
@@ -17,6 +21,8 @@ sub usage {
   print_option("--cloneonly", "clone the hcc source only, do not build the compiler");
   print_option("--buildonly", "build the compiler with existing source, do not clone or checkout the hcc source");
   print_option("--branch", "specify an HCC branch");
+  my $distro_list = join(", ", @supported_distros); 
+  print_option("--distro <name>", "specify the distro ($distro_list)");
   print_option("--package", "generate an installer package");
   return 0;
 }
@@ -47,7 +53,6 @@ sub run_command {
 
 my $num_cpus = Sys::CpuAffinity::getNumCpus();
 my $num_build_threads = $num_cpus * 2;
-print "Number of CPUs: $num_cpus  Number of build threads: $num_build_threads \n";
 
 my $hcc_repo_url = "https://github.com/RadeonOpenCompute/HCC-Native-GCN-ISA.git";
 my $hcc_git_https = "https://github.com/RadeonOpenCompute/hcc.git";
@@ -67,6 +72,8 @@ my $clone_only = '';
 my $build_only = '';
 my $package = '';
 
+my $distro = $supported_distros[0];
+
 my $build_type = "Release";
 my $gpu_arch = "AMD:AMDGPU:8:0:3";
 my $device_lib_dir = "/opt/rocm/lib";
@@ -80,6 +87,7 @@ GetOptions (
             ,"cloneonly" => \$clone_only
             ,"buildonly" => \$build_only
             ,"branch" => \$hcc_branch
+            ,"distro=s" => \$distro
             ,"package" => \$package
            ) or (usage() and die ("Error in command line arguments\n"));
 
@@ -87,6 +95,19 @@ if ($help) {
   usage();
   exit(0);
 }
+
+# check the distro value against the list of supported distro
+any(@supported_distros) eq $distro || die ("Unsupported distro: $distro\n");
+
+
+# print the build info
+print "HCC branch: $hcc_branch \n";
+print "Distro: $distro\n";
+print "C++ Runtime: ", ($use_stdlibcpp) ? "libstdc++" : "libc++", "\n";
+print "cloneonly: ", ($clone_only) ? "true" : "false", "\n";
+print "buildonly: ", ($build_only) ? "true" : "false", "\n";
+print "package: " , ($package) ? "true" : "false", "\n";
+print "Number of CPUs: $num_cpus  Number of build threads: $num_build_threads \n";
 
 my $command;
 
@@ -121,7 +142,7 @@ if (!$build_only) {
 # create the build directory and start the build
 run_command("mkdir $hcc_build_dir");
 chdir($hcc_build_dir);
-$command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir ../hcc";
+$command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir -DDISTRO=$distro ../hcc";
 
 if ($use_stdlibcpp) {
   $command = "$command -DUSE_LIBCXX=OFF";
