@@ -86,7 +86,7 @@ GetOptions (
             ,"threads=i" => \$num_build_threads
             ,"cloneonly" => \$clone_only
             ,"buildonly" => \$build_only
-            ,"branch" => \$hcc_branch
+            ,"branch=s" => \$hcc_branch
             ,"distro=s" => \$distro
             ,"package" => \$package
            ) or (usage() and die ("Error in command line arguments\n"));
