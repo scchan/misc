@@ -7,6 +7,7 @@ use Getopt::Long;
 use syntax 'junction';
 
 my @supported_distros = ("ubuntu", "fedora");
+my $hcc_build_dir = "build.hcc";
 
 sub print_option {
   my ($option, $description) = @_;
@@ -24,6 +25,8 @@ sub usage {
   my $distro_list = join(", ", @supported_distros); 
   print_option("--distro <name>", "specify the distro ($distro_list)");
   print_option("--package", "generate an installer package");
+  print_option("--debug", "create a debug build of hcc");
+  print_option("--builddir <dir>", "build directory (Default: $hcc_build_dir)");
   return 0;
 }
 
@@ -71,6 +74,7 @@ my $build_device_libs = '';
 my $clone_only = '';
 my $build_only = '';
 my $package = '';
+my $debug_build = '';
 
 my $distro = $supported_distros[0];
 
@@ -89,6 +93,8 @@ GetOptions (
             ,"branch=s" => \$hcc_branch
             ,"distro=s" => \$distro
             ,"package" => \$package
+            ,"debug" => \$debug_build
+            ,"builddir=s" => \$hcc_build_dir
            ) or (usage() and die ("Error in command line arguments\n"));
 
 if ($help) {
@@ -99,6 +105,9 @@ if ($help) {
 # check the distro value against the list of supported distro
 any(@supported_distros) eq $distro || die ("Unsupported distro: $distro\n");
 
+if ($debug_build) {
+  $build_type = "Debug";
+}
 
 # print the build info
 print "HCC branch: $hcc_branch \n";
@@ -106,6 +115,8 @@ print "Distro: $distro\n";
 print "C++ Runtime: ", ($use_stdlibcpp) ? "libstdc++" : "libc++", "\n";
 print "cloneonly: ", ($clone_only) ? "true" : "false", "\n";
 print "buildonly: ", ($build_only) ? "true" : "false", "\n";
+print "build type: ", $build_type, "\n";
+print "build directory: ", $hcc_build_dir, "\n";
 print "package: " , ($package) ? "true" : "false", "\n";
 print "Number of CPUs: $num_cpus  Number of build threads: $num_build_threads \n";
 
@@ -141,7 +152,7 @@ if (!$build_only) {
 
 # create the build directory and start the build
 run_command("mkdir $hcc_build_dir");
-chdir($hcc_build_dir);
+chdir($hcc_build_dir) || die ("Can't change to build directory $hcc_build_dir\n");
 $command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir -DDISTRO=$distro ../hcc";
 
 if ($use_stdlibcpp) {
