@@ -8,6 +8,7 @@ use syntax 'junction';
 
 my @supported_distros = ("ubuntu", "fedora");
 my $hcc_build_dir = "build.hcc";
+my $print_only = '';
 
 sub print_option {
   my ($option, $description) = @_;
@@ -27,6 +28,7 @@ sub usage {
   print_option("--package", "generate an installer package");
   print_option("--debug", "create a debug build of hcc");
   print_option("--builddir <dir>", "build directory (Default: $hcc_build_dir)");
+  print_option("--printonly", "print commands only");
   return 0;
 }
 
@@ -51,7 +53,9 @@ sub run_command {
   $command = "@_";
   print_command($command);
   #$command_result = `$command`;
-  system($command);
+  if (!$print_only) {
+    system($command);
+  }
 }
 
 my $num_cpus = Sys::CpuAffinity::getNumCpus();
@@ -95,6 +99,7 @@ GetOptions (
             ,"package" => \$package
             ,"debug" => \$debug_build
             ,"builddir=s" => \$hcc_build_dir
+            ,"printonly" => \$print_only
            ) or (usage() and die ("Error in command line arguments\n"));
 
 if ($help) {
@@ -152,9 +157,15 @@ if (!$build_only) {
 
 # create the build directory and start the build
 run_command("mkdir $hcc_build_dir");
-chdir($hcc_build_dir) || die ("Can't change to build directory $hcc_build_dir\n");
-$command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir -DDISTRO=$distro ../hcc";
 
+if (!$print_only) {
+  chdir($hcc_build_dir) || die ("Can't change to build directory $hcc_build_dir\n");
+}
+else {
+  run_command("cd $hcc_build_dir");
+}
+
+$command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir -DDISTRO=$distro ../hcc";
 if ($use_stdlibcpp) {
   $command = "$command -DUSE_LIBCXX=OFF";
 }
