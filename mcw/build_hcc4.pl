@@ -6,7 +6,7 @@ use Getopt::Long;
 # requires module Syntax::Feature::Junction
 use syntax 'junction';
 
-my @supported_distros = ("ubuntu", "fedora");
+my @supported_distros = ("trusty", "xenial", "fd23");
 my $hcc_build_dir = "build.hcc";
 my $print_only = '';
 
@@ -83,7 +83,7 @@ my $debug_build = '';
 my $distro = $supported_distros[0];
 
 my $build_type = "Release";
-my $gpu_arch = "AMD:AMDGPU:8:0:3";
+my $gpu_arch = "gfx803";
 my $device_lib_dir = "/opt/rocm/lib";
 my $hcc_build_dir = "build.hcc";
 
@@ -166,12 +166,14 @@ else {
 }
 
 $command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir -DDISTRO=$distro ../hcc";
-if ($use_stdlibcpp) {
-  $command = "$command -DUSE_LIBCXX=OFF";
-}
-else {
-  $command = "$command -DUSE_LIBCXX=ON";
-}
+
+
+#if ($use_stdlibcpp) {
+#  $command = "$command -DUSE_LIBCXX=OFF";
+#}
+#else {
+#  $command = "$command -DUSE_LIBCXX=ON";
+#}
 
 run_command($command);
 
