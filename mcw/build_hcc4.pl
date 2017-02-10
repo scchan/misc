@@ -24,7 +24,7 @@ sub usage {
   print_option("--buildonly", "build the compiler with existing source, do not clone or checkout the hcc source");
   print_option("--branch", "specify an HCC branch");
   my $distro_list = join(", ", @supported_distros); 
-  print_option("--distro <name>", "specify the distro ($distro_list)");
+  print_option("--distro <name>", "specify the distro ($distro_list).  Autodetect if not specified");
   print_option("--package", "generate an installer package");
   print_option("--debug", "create a debug build of hcc");
   print_option("--builddir <dir>", "build directory (Default: $hcc_build_dir)");
@@ -80,7 +80,8 @@ my $build_only = '';
 my $package = '';
 my $debug_build = '';
 
-my $distro = $supported_distros[0];
+my $distro = `lsb_release -sc`;
+chomp($distro);
 
 my $build_type = "Release";
 my $gpu_arch = "gfx803";
