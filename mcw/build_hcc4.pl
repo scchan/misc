@@ -28,6 +28,7 @@ sub usage {
   print_option("--package", "generate an installer package");
   print_option("--debug", "create a debug build of hcc");
   print_option("--builddir <dir>", "build directory (Default: $hcc_build_dir)");
+  print_option("--mirror", "speed up cloning of the source by fetching from gerrit mirror");
   print_option("--printonly", "print commands only");
   return 0;
 }
@@ -68,6 +69,13 @@ my $hcc_clang_git_ssh = "git\@github.com:RadeonOpenCompute/hcc-clang-upgrade.git
 my $hcc_llvm_git_ssh = "git\@github.com:RadeonOpenCompute/llvm.git";
 my $hcc_lld_git_ssh = "git\@github.com:RadeonOpenCompute/lld.git";
 
+my $gerrit_server="git.amd.com";
+my $gerrit_url="ssh://$gerrit_server:29418";
+my $gerrit_hcc_git       = "$gerrit_url/lightning/ec/hcc.git";
+my $gerrit_hcc_clang_git = "$gerrit_url/compute/ec/hcc-tot/clang.git";
+my $gerrit_hcc_llvm_git  = "$gerrit_url/compute/ec/hcc-tot/llvm.git";
+my $gerrit_hcc_lld_git   = "$gerrit_url/compute/ec/hcc-tot/lld.git";
+
 my $use_stdlibcpp = '';
 
 my $hcc_branch = "clang_tot_upgrade";
@@ -79,6 +87,7 @@ my $clone_only = '';
 my $build_only = '';
 my $package = '';
 my $debug_build = '';
+my $use_mirror = '';
 
 my $distro = `lsb_release -sc`;
 chomp($distro);
@@ -100,6 +109,7 @@ GetOptions (
             ,"package" => \$package
             ,"debug" => \$debug_build
             ,"builddir=s" => \$hcc_build_dir
+            ,"mirror" => \$use_mirror
             ,"printonly" => \$print_only
            ) or (usage() and die ("Error in command line arguments\n"));
 
@@ -129,26 +139,72 @@ print "Number of CPUs: $num_cpus  Number of build threads: $num_build_threads \n
 my $command;
 
 if (!$build_only) {
-  $command = "git clone --recursive -b $hcc_branch $hcc_git_https";
-  run_command($command);
 
-  # set SSH URL for git push
-  chdir("hcc");
-  $command = "git remote set-url --push origin $hcc_git_ssh";
-  run_command($command);
+  if ($use_mirror) {
 
-  chdir("clang");
-  $command = "git remote set-url --push origin $hcc_clang_git_ssh";
-  run_command($command);
+    # fetch the source from gerrit mirror to speed up
 
-  chdir("../compiler");
-  $command = "git remote set-url --push origin $hcc_llvm_git_ssh";
-  run_command($command);
+    my $origin_name = "gerrit";
 
-  chdir("../lld");
-  $command = "git remote set-url --push origin $hcc_lld_git_ssh";
-  run_command($command);
-  chdir("../..");
+    $command = "git clone --origin $origin_name $gerrit_hcc_git";
+    run_command($command);
+    chdir("hcc");
+    $command = "git remote add origin $hcc_git_ssh";
+    run_command($command);
+
+    $command = "git clone --origin $origin_name $gerrit_hcc_clang_git";
+    run_command($command);
+    chdir("clang");
+    $command = "git remote add origin $hcc_clang_git_ssh";
+    run_command($command);
+    chdir("..");
+
+    $command = "git clone --origin $origin_name $gerrit_hcc_llvm_git compiler";
+    run_command($command);
+    chdir("compiler");
+    $command = "git remote add origin $hcc_llvm_git_ssh";
+    run_command($command);
+    chdir("..");
+
+    $command = "git clone --origin $origin_name $gerrit_hcc_lld_git";
+    run_command($command);
+    chdir("lld");
+    $command = "git remote add origin $hcc_lld_git_ssh";
+    run_command($command);
+    chdir("..");
+
+
+    $command = "git fetch origin";
+    run_command($command);
+    $command = "git checkout origin/$hcc_branch";
+    run_command($command);
+    $command = "git submodule update";
+    run_command($command);
+
+    chdir("..");
+  }
+  else {
+    $command = "git clone --recursive -b $hcc_branch $hcc_git_https";
+    run_command($command);
+
+    # set SSH URL for git push
+    chdir("hcc");
+    $command = "git remote set-url --push origin $hcc_git_ssh";
+    run_command($command);
+
+    chdir("clang");
+    $command = "git remote set-url --push origin $hcc_clang_git_ssh";
+    run_command($command);
+
+    chdir("../compiler");
+    $command = "git remote set-url --push origin $hcc_llvm_git_ssh";
+    run_command($command);
+
+    chdir("../lld");
+    $command = "git remote set-url --push origin $hcc_lld_git_ssh";
+    run_command($command);
+    chdir("../..");
+  }
 
   if ($clone_only) {
     exit;
