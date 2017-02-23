@@ -151,11 +151,15 @@ if (!$build_only) {
     chdir("hcc");
     $command = "git remote add origin $hcc_git_ssh";
     run_command($command);
+    $command = "git fetch origin";
+    run_command($command);
 
     $command = "git clone --origin $origin_name $gerrit_hcc_clang_git";
     run_command($command);
     chdir("clang");
     $command = "git remote add origin $hcc_clang_git_ssh";
+    run_command($command);
+    $command = "git fetch origin";
     run_command($command);
     chdir("..");
 
@@ -164,6 +168,8 @@ if (!$build_only) {
     chdir("compiler");
     $command = "git remote add origin $hcc_llvm_git_ssh";
     run_command($command);
+    $command = "git fetch origin";
+    run_command($command);
     chdir("..");
 
     $command = "git clone --origin $origin_name $gerrit_hcc_lld_git";
@@ -171,14 +177,14 @@ if (!$build_only) {
     chdir("lld");
     $command = "git remote add origin $hcc_lld_git_ssh";
     run_command($command);
-    chdir("..");
-
-
     $command = "git fetch origin";
     run_command($command);
+    chdir("..");
+
     $command = "git checkout origin/$hcc_branch";
     run_command($command);
-    $command = "git submodule update";
+
+    $command = "git submodule update --init --recursive";
     run_command($command);
 
     chdir("..");
