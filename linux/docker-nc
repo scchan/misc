@@ -9,7 +9,7 @@ fi
 IMAGE=$1
 CONTAINER=$2
 
-docker run --privileged -tid --expose 22 -P --name $CONTAINER  $IMAGE
+docker run --privileged --shm-size="1g" -tid --expose 22 -P --name $CONTAINER  $IMAGE
 docker-sshd.ubuntu $CONTAINER
 docker port $CONTAINER
 
