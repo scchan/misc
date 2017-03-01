@@ -6,7 +6,6 @@ use Getopt::Long;
 # requires module Syntax::Feature::Junction
 use syntax 'junction';
 
-my @supported_distros = ("trusty", "xenial", "fd23");
 my $hcc_build_dir = "build.hcc";
 my $print_only = '';
 
@@ -23,8 +22,6 @@ sub usage {
   print_option("--cloneonly", "clone the hcc source only, do not build the compiler");
   print_option("--buildonly", "build the compiler with existing source, do not clone or checkout the hcc source");
   print_option("--branch", "specify an HCC branch");
-  my $distro_list = join(", ", @supported_distros); 
-  print_option("--distro <name>", "specify the distro ($distro_list).  Autodetect if not specified");
   print_option("--package", "generate an installer package");
   print_option("--debug", "create a debug build of hcc");
   print_option("--builddir <dir>", "build directory (Default: $hcc_build_dir)");
@@ -89,9 +86,6 @@ my $package = '';
 my $debug_build = '';
 my $use_mirror = '';
 
-my $distro = `lsb_release -sc`;
-chomp($distro);
-
 my $build_type = "Release";
 my $gpu_arch = "gfx803";
 my $device_lib_dir = "/opt/rocm/lib";
@@ -105,7 +99,6 @@ GetOptions (
             ,"cloneonly" => \$clone_only
             ,"buildonly" => \$build_only
             ,"branch=s" => \$hcc_branch
-            ,"distro=s" => \$distro
             ,"package" => \$package
             ,"debug" => \$debug_build
             ,"builddir=s" => \$hcc_build_dir
@@ -118,16 +111,12 @@ if ($help) {
   exit(0);
 }
 
-# check the distro value against the list of supported distro
-any(@supported_distros) eq $distro || die ("Unsupported distro: $distro\n");
-
 if ($debug_build) {
   $build_type = "Debug";
 }
 
 # print the build info
 print "HCC branch: $hcc_branch \n";
-print "Distro: $distro\n";
 print "C++ Runtime: ", ($use_stdlibcpp) ? "libstdc++" : "libc++", "\n";
 print "cloneonly: ", ($clone_only) ? "true" : "false", "\n";
 print "buildonly: ", ($build_only) ? "true" : "false", "\n";
@@ -228,7 +217,7 @@ else {
   run_command("cd $hcc_build_dir");
 }
 
-$command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir -DDISTRO=$distro ../hcc";
+$command = "cmake -DCMAKE_BUILD_TYPE=$build_type -DHSA_AMDGPU_GPU_TARGET=$gpu_arch -DROCM_DEVICE_LIB_DIR=$device_lib_dir ../hcc";
 
 
 #if ($use_stdlibcpp) {
