@@ -1,0 +1,8 @@
+#!/bin/bash
+
+UPSTREAM=git@github.com:RadeonOpenCompute/compiler-rt.git
+UPSTREAM_NAME=upstream
+
+git remote add $UPSTREAM_NAME $UPSTREAM
+
+git fetch $UPSTREAM_NAME

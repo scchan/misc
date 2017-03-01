@@ -1,0 +1,8 @@
+#!/bin/bash
+
+UPSTREAM=git@github.com:llvm-mirror/compiler-rt.git
+UPSTREAM_NAME=llvm-mirror
+
+git remote add $UPSTREAM_NAME $UPSTREAM
+
+git fetch $UPSTREAM_NAME
