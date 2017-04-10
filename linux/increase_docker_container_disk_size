@@ -17,3 +17,12 @@ Remove everything in /var/lib/docker/ except perhaps /var/lib/docker/devicemappe
 
 Restart docker
 Do a "docker info" and check whether the "Base Device Size" gets the new size setting
+
+
+
+Fixing DNS issues:
+
+add these DNS options to the end of the "ExecStart" line mentioned above
+--dns 172.24.3.136 --dns 172.24.3.137
+
+
