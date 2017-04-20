@@ -32,7 +32,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends pe
 
 # Install xfce
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-  xfce4 xfce4-goodies xfdesktop4 vim-gnome firefox
+  xfce4 xfce4-goodies xfdesktop4 xubuntu-desktop vim-gnome firefox
 
 # Install x2go
 RUN add-apt-repository -y -u  ppa:x2go/stable
