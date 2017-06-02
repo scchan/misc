@@ -23,7 +23,7 @@ RUN apt-get update
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends hsa-rocr-dev hsa-ext-rocr-dev hsakmt-roct-dev rocm-smi
 
 # Install HCC build dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git cmake make g++  g++-multilib gcc-multilib python findutils libelf1 libpci3 file rocm-device-libs debianutils
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git cmake make g++  g++-multilib gcc-multilib python findutils libelf1 libpci3 file rocm-device-libs debianutils libunwind-dev
 RUN curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > /usr/local/bin/repo && \
     chmod a+x /usr/local/bin/repo
 
