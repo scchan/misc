@@ -1,0 +1,42 @@
+FROM ubuntu:16.04
+
+# Install Basic Packages
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  apt-utils
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  sudo \
+  openssh-client \
+  openssh-server \
+  wget \
+  curl \
+  vim \
+  screen \
+  iputils-ping \
+  net-tools \
+  software-properties-common
+ 
+
+# Install ROCM
+RUN echo 'deb [trusted=yes arch=amd64] http://compute-artifactory.amd.com/artifactory/rocm-release-1.5-deb xenial main' > /etc/apt/sources.list.d/rocm.list
+RUN apt-get update
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends hsa-rocr-dev hsa-ext-rocr-dev hsakmt-roct-dev rocm-smi
+
+# Install HCC build dependencies
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git cmake make g++  g++-multilib gcc-multilib python findutils libelf1 libpci3 file rocm-device-libs debianutils libunwind-dev
+RUN curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > /usr/local/bin/repo && \
+    chmod a+x /usr/local/bin/repo
+
+# Install Perl
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends perl cpanminus libsyntax-keyword-junction-perl libperl6-junction-perl libsub-exporter-perl
+RUN cpanm Sys::CpuAffinity
+
+# Install xfce
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  xfce4 xfce4-goodies xfdesktop4 xubuntu-desktop vim-gnome firefox xscreensaver 
+
+# Install x2go
+RUN add-apt-repository -y -u  ppa:x2go/stable
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends x2goserver x2goserver-xsession
+
+

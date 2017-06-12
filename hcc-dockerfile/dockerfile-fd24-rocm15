@@ -1,0 +1,25 @@
+FROM fedora:24
+
+# Install Basic Packages
+RUN dnf -y update && dnf -y install \
+  sudo \
+  openssh-clients \
+  openssh-server \
+  wget \
+  curl \
+  vim-enhanced \
+  screen \
+  iputils \
+  net-tools 
+ 
+# Install ROCM
+RUN echo '[remote]' > /etc/yum.repos.d/rocm.rep \
+ && echo 'name=ROCm Repo' >> /etc/yum.repos.d/rocm.rep \
+ && echo 'baseurl=http://compute-artifactory.amd.com/artifactory/rocm-release-1.5-rpm/' >> /etc/yum.repos.d/rocm.rep \
+ && echo 'enabled=1' >> /etc/yum.repos.d/rocm.rep \
+ && echo 'gpgcheck=0' >> /etc/yum.repos.d/rocm.rep \
+ && dnf clean all \
+ && dnf -y install hsakmt-devel hsa-rocr-dev hsa-ext-rocr-dev rocm-smi
+
+
+
