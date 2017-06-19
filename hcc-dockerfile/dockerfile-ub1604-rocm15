@@ -22,7 +22,7 @@ RUN wget -qO - http://packages.amd.com/rocm/apt/debian/rocm.gpg.key | apt-key ad
 RUN echo 'deb [trusted=yes arch=amd64] http://packages.amd.com/rocm/apt/debian/ xenial main' > /etc/apt/sources.list.d/rocm.list
 
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends hsa-rocr-dev hsa-ext-rocr-dev hsakmt-roct-dev rocm-smi rocm-util
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends hsa-rocr-dev hsa-ext-rocr-dev hsakmt-roct-dev rocm-smi rocm-utils
 
 # Install HCC build dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git cmake make g++  g++-multilib gcc-multilib python findutils libelf1 libpci3 file rocm-device-libs debianutils libunwind-dev pkg-config 
