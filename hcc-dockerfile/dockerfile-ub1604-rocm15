@@ -14,6 +14,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
   screen \
   iputils-ping \
   net-tools \
+  gdb ddd \
   software-properties-common
  
 
