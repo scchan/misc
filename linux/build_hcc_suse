@@ -1,5 +1,5 @@
 
-sudo zypper install git cmake make gcc-c++ python findutils elfutils pciutils-devel file rpm-build libunwind-devel   pkg-config libpth-devel
+sudo zypper install git cmake make gcc-c++ python python-xml findutils elfutils pciutils-devel file rpm-build libunwind-devel pkg-config libpth-devel
 
 // install libc++ from OSB
 
