@@ -1,0 +1,15 @@
+#!/bin/bash
+
+
+if [[ "$#" != 2 ]]; then
+  echo "Usage: docker-nc <image_name> <container_name>"
+  exit
+fi
+
+IMAGE=$1
+CONTAINER=$2
+
+docker run --privileged --shm-size="1g" -tid -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --expose 22 -P --name $CONTAINER   $IMAGE /sbin/init
+docker port $CONTAINER
+
+

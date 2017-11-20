@@ -1,0 +1,8 @@
+
+sudo zypper install git cmake make gcc-c++ python python-xml findutils elfutils pciutils-devel file rpm-build libunwind-devel pkg-config libpth-devel
+
+// install libc++ from OSB
+
+sudo zypper addrepo -f http://download.opensuse.org/repositories/devel:/tools:/compiler/openSUSE_Leap_42.3/ devel_tools_compiler
+sudo zypper update
+sudo zypper install libc++-devel
