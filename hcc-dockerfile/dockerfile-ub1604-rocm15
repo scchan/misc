@@ -14,16 +14,19 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
   screen \
   iputils-ping \
   net-tools \
+  gdb ddd \
   software-properties-common
  
 
 # Install ROCM
-RUN echo 'deb [trusted=yes arch=amd64] http://compute-artifactory.amd.com/artifactory/rocm-release-1.5-deb xenial main' > /etc/apt/sources.list.d/rocm.list
+RUN wget -qO - http://packages.amd.com/rocm/apt/debian/rocm.gpg.key | apt-key add -
+RUN echo 'deb [trusted=yes arch=amd64] http://packages.amd.com/rocm/apt/debian/ xenial main' > /etc/apt/sources.list.d/rocm.list
+
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends hsa-rocr-dev hsa-ext-rocr-dev hsakmt-roct-dev rocm-smi
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends hsa-rocr-dev hsa-ext-rocr-dev hsakmt-roct-dev rocm-smi rocm-utils
 
 # Install HCC build dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git cmake make g++  g++-multilib gcc-multilib python findutils libelf1 libpci3 file rocm-device-libs debianutils libunwind-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends git cmake make g++  g++-multilib gcc-multilib python findutils libelf1 libpci3 file rocm-device-libs debianutils libunwind-dev pkg-config 
 RUN curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > /usr/local/bin/repo && \
     chmod a+x /usr/local/bin/repo
 
