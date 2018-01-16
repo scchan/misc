@@ -9,7 +9,10 @@ fi
 IMAGE=$1
 CONTAINER=$2
 
-docker run --privileged --shm-size="1g" -tid --expose 22 -P --name $CONTAINER  $IMAGE
+DNS_SERVER1="172.24.3.136"
+DNS_SERVER2="172.24.3.137"
+
+docker run --privileged --shm-size="1g" -tid --dns=$DNS_SERVER1 --dns=$DNS_SERVER2 --expose 22 -P --name $CONTAINER  $IMAGE
 docker-sshd.ubuntu $CONTAINER
 docker port $CONTAINER
 
