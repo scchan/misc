@@ -8,12 +8,16 @@ my $remote_name = "gerrit";
 my @dirs = ("."
           , "clang"
           , "compiler"
-          , "lld");
+          , "lld"
+          , "clang-tools-extra"
+          , "compiler-rt");
 
 my @gerrit_repos = ("lightning/ec/hcc.git"
                   , "compute/ec/hcc-tot/clang.git"
                   , "compute/ec/hcc-tot/llvm.git"
-                  , "compute/ec/hcc-tot/lld.git");
+                  , "compute/ec/hcc-tot/lld.git"
+                  , "compute/ec/clang-tools-extra"
+                  , "compute/ec/hcc-tot/compiler-rt");
 
 my $pwd = cwd;
 
