@@ -5,6 +5,9 @@ use Cwd qw(cwd);
 my $gerrit_git_url = "ssh://git.amd.com:29418";
 my $remote_name = "gerrit";
 
+my $scchan_github_url = "git\@github.com:scchan";
+my $scchan_remote_name = "scchan";
+
 my @dirs = ("."
           , "clang"
           , "compiler"
@@ -19,6 +22,13 @@ my @gerrit_repos = ("lightning/ec/hcc.git"
                   , "compute/ec/clang-tools-extra"
                   , "compute/ec/hcc-tot/compiler-rt");
 
+my @scchan_repos = ("hcc.git"
+                  , "hcc-clang-upgrade.git"
+                  , "llvm.git"
+                  , "lld.git"
+                  , "clang-tools-extra.git"
+                  , "compiler-rt.git");
+
 my $pwd = cwd;
 
 for(my $i = 0; $i < @dirs; $i++) {
@@ -27,8 +37,12 @@ for(my $i = 0; $i < @dirs; $i++) {
   my $git_command = "git remote add $remote_name $gerrit_git_url/$gerrit_repos[$i]";
   #print "$git_command \n";
   system($git_command);
-
   system("git fetch $remote_name");
+
+  my $git_command = "git remote add $scchan_remote_name $scchan_github_url/$scchan_repos[$i]";
+  #print "$git_command \n";
+  system($git_command);
+  system("git fetch $scchan_remote_name");
 
   chdir($pwd);
 }
