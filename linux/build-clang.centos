@@ -1,0 +1,22 @@
+#!/bin/bash
+set -x
+
+BUILD_TYPE="Release"
+LLVM_PROJECT_PATH="../llvm-project"
+LLVM_TARGETS="X86"
+
+PACKAGE_TYPE="RPM"
+PACKAGE_NAME="clang_amd"
+
+CMAKE_BIN=cmake3
+
+# 1- Get the llvm-project
+#      git clone https://github.com/llvm/llvm-project.git
+# 2- Checkout the version to build
+#      ex: git checkout release/8.x
+# 3- Create a build directory and run this script
+
+$CMAKE_BIN -DCMAKE_BUILD_TYPE=$RELEASE_TYPE -DLLVM_TARGETS_TO_BUILD=$LLVM_TARGETS -DLLVM_ENABLE_PROJECTS=clang -DCLANG_DEFAULT_CXX_STDLIB=libstdc++ \
+-DCPACK_PACKAGE_NAME=$PACKAGE_NAME -DCPACK_GENERATOR=$PACKAGE_TYPE $LLVM_PROJECT_PATH/llvm
+
+make -j16 && make package
