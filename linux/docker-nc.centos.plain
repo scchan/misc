@@ -1,0 +1,26 @@
+#!/bin/bash
+
+
+if [[ "$#" != 2 ]]; then
+  echo "Usage: docker-nc <image_name> <container_name>"
+  exit
+fi
+
+IMAGE=$1
+CONTAINER=$2
+
+DNS_SERVER1="172.24.3.136"
+DNS_SERVER2="172.24.3.137"
+
+HOST_SHARED_DIR=$HOME/docker_share
+CONTAINER_DIR=/media/docker_share
+
+DOCKER_SHARED=""
+if [ -d $HOST_SHARED_DIR ]; then
+  DOCKER_SHARED="-v $HOST_SHARED_DIR:$CONTAINER_DIR"
+fi
+
+docker run --privileged --shm-size="1g" -tid $DOCKER_SHARED -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --dns=$DNS_SERVER1 --dns=$DNS_SERVER2 --expose 22 -P --name $CONTAINER   $IMAGE /bin/bash
+docker port $CONTAINER
+
+
