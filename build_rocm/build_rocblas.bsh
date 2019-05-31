@@ -3,5 +3,5 @@ set -x
 ROCBLAS_SRC_DIR=rocBLAS
 
 cd $ROCBLAS_SRC_DIR
-./install -icd
+./install.sh -icd
 cd ..
