@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -x
+
+HCC_SRC_DIR=hcc
+HCC_BUILD_DIR=build.hcc
+CMAKE=cmake3
+
+mkdir $HCC_BUILD_DIR
+cd $HCC_BUILD_DIR
+$CMAKE ../$HCC_SRC_DIR && make -j16 && make package
