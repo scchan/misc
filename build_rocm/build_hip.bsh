@@ -1,0 +1,9 @@
+#!/bin/bash
+
+HIP_SRC_DIR=HIP
+HIP_BUILD_DIR=build.HIP
+CMAKE=cmake3
+
+mkdir $HIP_BUILD_DIR
+cd $HIP_BUILD_DIR
+$CMAKE ../$HIP_SRC_DIR && make -j && make package

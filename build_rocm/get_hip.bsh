@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -x
+
+HIP_REPO=https://github.com/ROCm-Developer-Tools/HIP.git
+HIP_RELEASE=master
+
+git clone $HIP_REPO && cd HIP && git checkout $HIP_RELEASE && cd ..
