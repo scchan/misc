@@ -47,10 +47,10 @@ for(my $i = 0; $i < @dirs; $i++) {
   system($git_command);
   system("git fetch $remote_name");
 
-  my $git_command = "git remote add $gerrit_legacy_remote_name $gerrit_git_url/$gerrit_legacy_repos[$i]";
+#  my $git_command = "git remote add $gerrit_legacy_remote_name $gerrit_git_url/$gerrit_legacy_repos[$i]";
   #print "$git_command \n";
-  system($git_command);
-  system("git fetch $gerrit_legacy_remote_name");
+#  system($git_command);
+#  system("git fetch $gerrit_legacy_remote_name");
 
   my $git_command = "git remote add $scchan_remote_name $scchan_github_url/$scchan_repos[$i]";
   #print "$git_command \n";
