@@ -9,8 +9,12 @@ fi
 IMAGE=$1
 CONTAINER=$2
 
+DOCKER_OPTS=""
+
 DNS_SERVER1="172.24.3.136"
 DNS_SERVER2="172.24.3.137"
+#DOCKER_OPTS="$DOCKER_OPTS  --dns=$DNS_SERVER1 --dns=$DNS_SERVER2 "
+
 
 HOST_SHARED_DIR=$HOME/docker_share
 CONTAINER_DIR=/media/docker_share
@@ -19,9 +23,9 @@ DOCKER_SHARED=""
 if [ -d $HOST_SHARED_DIR ]; then
   DOCKER_SHARED="-v $HOST_SHARED_DIR:$CONTAINER_DIR"
 fi
+DOCKER_OPTS="$DOCKER_OPTS $DOCKER_SHARED"
 
-docker run --privileged --shm-size="1g" -tid $DOCKER_SHARED --dns=$DNS_SERVER1 --dns=$DNS_SERVER2 --expose 22 -P --name $CONTAINER  $IMAGE
-
+docker run --privileged --shm-size="1g" -tid $DOCKER_OPTS --expose 22 -P --name $CONTAINER  $IMAGE
 
 docker-sshd.ubuntu $CONTAINER
 docker port $CONTAINER
