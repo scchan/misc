@@ -3,49 +3,30 @@ use strict;
 use Cwd qw(cwd);
 
 my $gerrit_git_url = "ssh://git.amd.com:29418";
-my $remote_name = "gerrit";
+my $gerrit_remote_name = "gerrit";
 my $gerrit_legacy_remote_name = "gerrit_legacy";
 
 my $scchan_github_url = "git\@github.com:scchan";
 my $scchan_remote_name = "scchan";
 
 my @dirs = ("."
-          , "clang"
-          , "compiler"
-          , "lld"
-          , "clang-tools-extra"
-          , "compiler-rt");
+            , "llvm-project");
 
 my @gerrit_repos = ("lightning/ec/hcc.git"
-                  , "compute/ec/hcc-tot/clang.git"
-                  , "lightning/ec/llvm.git"
-                  , "lightning/ec/lld.git"
-                  , "compute/ec/clang-tools-extra"
-                  , "compute/ec/compiler-rt");
-
-my @gerrit_legacy_repos = ("lightning/ec/hcc.git"
-                         , "compute/ec/hcc-tot/clang.git"
-                         , "compute/ec/hcc-tot/llvm.git"
-                         , "compute/ec/hcc-tot/lld.git"
-                         , "compute/ec/clang-tools-extra"
-                         , "compute/ec/hcc-tot/compiler-rt");
+                  , "lightning/ec/llvm-project.git");
 
 my @scchan_repos = ("hcc.git"
-                  , "hcc-clang-upgrade.git"
-                  , "llvm.git"
-                  , "lld.git"
-                  , "clang-tools-extra.git"
-                  , "compiler-rt.git");
+                  , "llvm-project.git");
 
 my $pwd = cwd;
 
 for(my $i = 0; $i < @dirs; $i++) {
   chdir($dirs[$i]);
 
-  my $git_command = "git remote add $remote_name $gerrit_git_url/$gerrit_repos[$i]";
+  my $git_command = "git remote add $gerrit_remote_name $gerrit_git_url/$gerrit_repos[$i]";
   #print "$git_command \n";
   system($git_command);
-  system("git fetch $remote_name");
+  system("git fetch $gerrit_remote_name");
 
 #  my $git_command = "git remote add $gerrit_legacy_remote_name $gerrit_git_url/$gerrit_legacy_repos[$i]";
   #print "$git_command \n";
