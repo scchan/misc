@@ -1,0 +1,119 @@
+#!/usr/bin/perl
+
+use strict;
+use Getopt::Long;
+use Data::Dumper::Concise;
+
+my $filter_exit_limit = 60;
+my $filter_unknown_owner = 1;
+my $filter_dryrun = 0;
+
+GetOptions('exit=i' => \$filter_exit_limit,
+           'unknown=i' => \$filter_unknown_owner,
+           'dryrun=i' => \$filter_dryrun,
+          ) or die ("Error in command line options\n");
+
+my @users = qw(
+  ashi1
+  cdevadas
+  dbhaskar
+  dsalinas
+  lmoriche
+  payam
+  rgarg
+  rksharma
+  saiislam
+  sarbojit
+  scchan
+  ssahasra
+  ssarkar
+  zukhan
+);
+
+my @containers;
+
+open(my $docker_ps, '-|', "docker ps -a --format '{{.Names}}\t{{.ID}}\t{{.Status}}\t{{.Image}}' ") or die $!;
+while (chomp(my $line = <$docker_ps>)) {
+  my @t = split /\t/, $line;
+  #print join(',',@t),"\n";
+
+  my $exited = 0;
+  my $status_string = $t[2];
+
+  # parse the status string
+  if (index($status_string, "Up") == -1) {
+    if (index($status_string, "Created") != -1) {
+
+    }
+    else {
+      $status_string =~ s/Exited \(\d+\)\s//;
+      my @es = split /\s/, $status_string;
+
+      if ($es[1] eq "days") {
+        $exited = $es[0];
+      }
+      elsif ($es[1] eq "weeks") {
+        $exited = $es[0] * 7;
+      }
+      elsif ($es[1] eq "months") {
+        $exited = $es[0] * 30;
+      }
+      else {
+        die "Unrecognized status: $status_string";
+      }
+    }
+  }
+
+  # figure out who owns it
+  my $owner = 0;
+  foreach my $u (@users) {
+    if ($t[0] =~ /$u/i) {
+      $owner = $u;
+      last;
+    }
+  }
+  # attempt to find the owner from the image name
+  if ($owner eq 0) {
+    foreach my $u (@users) {
+      if ($t[3] =~ /$u/i) {
+        $owner = $u;
+        last;
+      }
+    }
+  }
+
+  my %container = (
+    "name" =>  $t[0],
+    "id"   =>  $t[1],
+    "exit" =>  $exited,
+    "owner" => $owner,
+    "image" => $t[3],
+  );
+#  print Dumper(\%container);
+  push(@containers, \%container);
+}
+
+CONTAINER: foreach my $c (@containers) {
+  if ($c->{exit} >= $filter_exit_limit) {
+
+    next CONTAINER if ($filter_unknown_owner != 0 
+                       && $c->{owner} ne 0);
+   
+    my $confirmation = "";
+    while (1) {
+      print "Confirm to delete container [y/n]: \n";
+      print Dumper(\%$c);
+      chomp($confirmation = <STDIN>);
+      if ($confirmation eq "n") { last; }
+      if ($confirmation eq "y") {
+        if ($filter_dryrun eq 0) {
+          print "Deleting container $c->{name}\n";
+          my $docker_rm_command = "docker rm $c->{name}";
+          system($docker_rm_command);
+        }
+        last;
+      }
+    }
+  }
+}
+
