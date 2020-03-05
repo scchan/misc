@@ -1,0 +1,6 @@
+#!/bin/bash
+
+IMAGE=$1
+DEST=$2
+
+docker save $IMAGE | pv -N "Transfering to docker-machine..." | ssh -C $DEST docker load
