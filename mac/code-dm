@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -x
+
+DOCKER_MACHINE_SERVER=$1
+if [ -z "$DOCKER_MACHINE_SERVER" ]
+then
+  echo "Usage: $0 <docker machine server>"
+  exit
+fi
+
+eval $(docker-machine env $DOCKER_MACHINE_SERVER)
+code
