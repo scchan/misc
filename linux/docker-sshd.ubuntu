@@ -1,5 +1,5 @@
 #!/bin/bash
 
-docker exec -d "$@" service ssh start
+docker exec -u root:root -d "$@" service ssh start
 echo "IP address: "
 docker-ip "$@"
