@@ -20,7 +20,7 @@ if [ -d $HOST_SHARED_DIR ]; then
   DOCKER_SHARED="-v $HOST_SHARED_DIR:$CONTAINER_DIR"
 fi
 
-DOCKER_OPTS="$DOCKER_OPTS -u scchan:scchan"
+DOCKER_OPTS="$DOCKER_OPTS -u scchan"
 
 docker run --privileged --shm-size="1g" -tid $DOCKER_SHARED $DOCKER_OPTS -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --dns=$DNS_SERVER1 --dns=$DNS_SERVER2 --expose 22 -P --name $CONTAINER   $IMAGE /bin/bash
 docker port $CONTAINER
