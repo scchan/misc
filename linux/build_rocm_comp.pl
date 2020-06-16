@@ -7,17 +7,20 @@ use Getopt::Long;
 use IPC::System::Simple qw(system);
 use String::Util qw(trim);
 
-# run_command(command, working_dir, dry_run)
-sub run_command {
+# run_cmake_command(command, build_dir, dry_run)
+sub run_cmake_command {
     my ($command
-        , $working_dir
+        , $build_dir
         , $dry_run) = @_;
     if ($dry_run) {
         print("$command \n");
     } else {
         my $dir;
-        if ($working_dir) {
-            $dir = pushd($working_dir);
+        if ($build_dir) {
+            if (not (-d $build_dir)) {
+                mkdir($build_dir) or die "Unable to create $build_dir";
+            }
+            $dir = pushd($build_dir);
         }
         system($command);
     }
@@ -53,6 +56,19 @@ my $rocdl_install_path = "$rocm_path";
 my $rocdl_source_path = "$current_path/ROCm-Device-Libs";
 my $rocdl_build_path = "";
 
+# ROCclr
+my $rocclr_repo_name = "ROCclr";
+my $rocclr_install_path = "$rocm_path/rocclr";
+my $rocclr_source_path = "$current_path/$rocclr_repo_name";
+my $rocclr_build_path = "";
+my $opencl_source_path = "$current_path/opencl";
+
+# HIP
+my $hip_repo_name = "HIP";
+my $hip_install_path = "";
+my $hip_source_path = "$current_path/$hip_repo_name";
+my $hip_build_path = "";
+
 GetOptions ("build=s" => \$cmake_build_type
             ,"components=s" => \$components_to_build
             ,"dry_run" => \$dry_run
@@ -61,10 +77,18 @@ GetOptions ("build=s" => \$cmake_build_type
             ,"llvm_build=s" => \$llvm_build_path
             ,"rocdl_source=s" => \$rocdl_source_path
             ,"rocdl_build=s" => \$rocdl_build_path
+            ,"rocclr_source=s" => \$rocclr_source_path
+            ,"rocclr_build_path=s" => \$rocclr_build_path
+            ,"opencl_source=s" => \$opencl_source_path
+            ,""
             );
 
 
-$cmake_command = "$cmake_path -DCMAKE_BUILD_TYPE=$cmake_build_type -G $cmake_generator  -DCPACK_PACKAGE_CONTACT=$package_contact "; 
+$cmake_command = "$cmake_path -DCMAKE_BUILD_TYPE=$cmake_build_type";
+if ($components_to_build neq "hip") {
+    $cmake_command .= " -G $cmake_generator";
+}
+$cmake_command .= " -DCPACK_PACKAGE_CONTACT=$package_contact "; 
 
 # decide on the installer package format
 if ($lsb_release) {
@@ -90,7 +114,7 @@ if ($cpack_generator) {
 if ($components_to_build eq "llvm") {
 
     $cmake_command .= " -DCPACK_PACKAGE_NAME=$llvm_package_name";
-    $cmake_command .= " -DCMAKE_INSTALL_PREFIX=$llvm_install_path -DCPACK_PACKAGE_INSTALL_PREFIX=$llvm_install_path";
+    $cmake_command .= " -DCMAKE_INSTALL_PREFIX=$llvm_install_path -DCPACK_PACKAGING_INSTALL_PREFIX=$llvm_install_path";
     $cmake_command .= " -DLLVM_TARGETS_TO_BUILD=\"$llvm_targets\"";
     $cmake_command .= " -DLLVM_ENABLE_PROJECTS=\"$llvm_projects\"";
 
@@ -99,11 +123,7 @@ if ($components_to_build eq "llvm") {
     if ($llvm_build_path eq "") {
         $llvm_build_path = $current_path."/build.".$llvm_package_name.".".$cmake_build_type;
     }
-    if (not (-d $llvm_build_path)) {
-        mkdir($llvm_build_path) or die "Unable to create $llvm_build_path";
-    }
-
-    run_command($cmake_command, $llvm_build_path, $dry_run);
+    run_cmake_command($cmake_command, $llvm_build_path, $dry_run);
 }
 
 # ROCDL specific
@@ -124,10 +144,33 @@ if ($components_to_build eq "rocdl") {
     if ($rocdl_build_path eq "") {
         $rocdl_build_path = "$current_path/build.rocdl.$cmake_build_type";
     }
-    if (not (-d $rocdl_build_path)) {
-        mkdir($rocdl_build_path) or die "Unable to create $rocdl_build_path";
-    }
-
-    run_command($cmake_command, $rocdl_build_path, $dry_run);
+    run_cmake_command($cmake_command, $rocdl_build_path, $dry_run);
 }
-# cmake -DCMAKE_BUILD_TYPE="Release" -DCMAKE_PREFIX_PATH=$LLVM_BUILD -DCMAKE_INSTALL_PREFIX=/opt/rocm/bitcode -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm/bitcode -DCPACK_GENERATOR=DEB  -DCPACK_PACKAGE_CONTACT=AMD   ../ROCm-Device-Libs/
+
+# ROCclr specific
+if ($rocclr_build_path eq "") {
+    $rocclr_build_path = "$current_path/build.$rocclr_repo_name.$cmake_build_type";
+}
+if ($components_to_build eq "rocclr") {
+
+    $cmake_command .= " -DOPENCL_DIR=$opencl_source_path -DCMAKE_INSTALL_PREFIX=$rocclr_install_path";
+    $cmake_command .= " $rocclr_source_path";
+    run_cmake_command($cmake_command, $rocclr_build_path, $dry_run);
+}
+
+# HIP
+# sudo cmake -DCMAKE_BUILD_TYPE=Release  -DHIP_COMPILER=clang -DHIP_PLATFORM=rocclr -DCMAKE_PREFIX_PATH=/home/scchan/code/build.rocclr/ -DROCM_PATH=/opt/rocm -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE -DCMAKE_SKIP_BUILD_RPATH=TRUE  ../HIP/
+
+if ($components_to_build eq "hip") {
+
+    $cmake_command .= " -DHIP_COMPILER=clang -DHIP_PLATFORM=rocclr";
+    $cmake_command .= " -DCMAKE_PREFIX_PATH=$rocclr_build_path";
+    $cmake_command .= " -DROCM_PATH=$rocm_path";
+    $cmake_command .= " -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE -DCMAKE_SKIP_BUILD_RPATH=TRUE";
+    $cmake_command .= " $hip_source_path";
+    if ($hip_build_path eq "") {
+        $hip_build_path = "$current_path/build.$hip_repo_name.$cmake_build_type";
+    }
+    run_cmake_command($cmake_command, $hip_build_path, $dry_run);
+}
+    
