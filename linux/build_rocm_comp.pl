@@ -85,7 +85,7 @@ GetOptions ("build=s" => \$cmake_build_type
 
 
 $cmake_command = "$cmake_path -DCMAKE_BUILD_TYPE=$cmake_build_type";
-if ($components_to_build neq "hip") {
+if ($components_to_build ne "hip") {
     $cmake_command .= " -G $cmake_generator";
 }
 $cmake_command .= " -DCPACK_PACKAGE_CONTACT=$package_contact "; 
