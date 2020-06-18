@@ -25,6 +25,8 @@ if [ -d $HOST_SHARED_DIR ]; then
 fi
 DOCKER_OPTS="$DOCKER_OPTS $DOCKER_SHARED"
 
+DOCKER_OPTS="$DOCKER_OPTS -u scchan"
+
 docker run --privileged --shm-size="1g" -tid $DOCKER_OPTS --expose 22 -P --name $CONTAINER  $IMAGE
 
 docker-sshd.ubuntu $CONTAINER
