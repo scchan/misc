@@ -5,7 +5,7 @@ use File::pushd;
 use File::Which;
 use Getopt::Long;
 use IPC::System::Simple qw(system);
-use String::Util qw(trim);
+use String::Trim;
 
 # run_cmake_command(command, build_dir, dry_run)
 sub run_cmake_command {
@@ -165,6 +165,7 @@ if ($components_to_build eq "hip") {
 
     $cmake_command .= " -DHIP_COMPILER=clang -DHIP_PLATFORM=rocclr";
     $cmake_command .= " -DCMAKE_PREFIX_PATH=$rocclr_build_path";
+    $cmake_command .= " -DROCclr_DIR=$rocclr_source_path";
     $cmake_command .= " -DROCM_PATH=$rocm_path";
     $cmake_command .= " -DCMAKE_BUILD_WITH_INSTALL_RPATH=TRUE -DCMAKE_SKIP_BUILD_RPATH=TRUE";
     $cmake_command .= " $hip_source_path";
