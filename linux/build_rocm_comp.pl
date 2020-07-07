@@ -12,6 +12,8 @@ sub run_cmake_command {
     my ($command
         , $build_dir
         , $dry_run) = @_;
+
+    $command = qq{$command};
     if ($dry_run) {
         print("$command \n");
     } else {
@@ -56,6 +58,11 @@ my $rocdl_install_path = "$rocm_path";
 my $rocdl_source_path = "$current_path/ROCm-Device-Libs";
 my $rocdl_build_path = "";
 
+# comgr
+my $comgr_install_path = "$rocm_path";
+my $comgr_source_path = "$current_path/support/lib/comgr";
+my $comgr_build_path = "";
+
 # ROCclr
 my $rocclr_repo_name = "ROCclr";
 my $rocclr_install_path = "$rocm_path/rocclr";
@@ -77,6 +84,8 @@ GetOptions ("build=s" => \$cmake_build_type
             ,"llvm_build=s" => \$llvm_build_path
             ,"rocdl_source=s" => \$rocdl_source_path
             ,"rocdl_build=s" => \$rocdl_build_path
+            ,"comgr_source=s" => \$comgr_source_path
+            ,"comgr_build_path=s" => \$comgr_build_path
             ,"rocclr_source=s" => \$rocclr_source_path
             ,"rocclr_build_path=s" => \$rocclr_build_path
             ,"opencl_source=s" => \$opencl_source_path
@@ -111,40 +120,50 @@ if ($cpack_generator) {
 
 
 # LLVM specific
+if ($llvm_build_path eq "") {
+    $llvm_build_path = $current_path."/build.".$llvm_package_name.".".$cmake_build_type;
+}
 if ($components_to_build eq "llvm") {
 
     $cmake_command .= " -DCPACK_PACKAGE_NAME=$llvm_package_name";
     $cmake_command .= " -DCMAKE_INSTALL_PREFIX=$llvm_install_path -DCPACK_PACKAGING_INSTALL_PREFIX=$llvm_install_path";
     $cmake_command .= " -DLLVM_TARGETS_TO_BUILD=\"$llvm_targets\"";
     $cmake_command .= " -DLLVM_ENABLE_PROJECTS=\"$llvm_projects\"";
-
     $cmake_command .= " $llvm_source_path/llvm";
 
-    if ($llvm_build_path eq "") {
-        $llvm_build_path = $current_path."/build.".$llvm_package_name.".".$cmake_build_type;
-    }
     run_cmake_command($cmake_command, $llvm_build_path, $dry_run);
 }
 
 # ROCDL specific
+if ($rocdl_build_path eq "") {
+    $rocdl_build_path = "$current_path/build.rocdl.$cmake_build_type";
+}
 if ($components_to_build eq "rocdl") {
 
     # add search path for clang
-    my $cmake_prefix_path = "/opt/rocm/llvm";
-    if ($llvm_build_path) {
-        $cmake_prefix_path = $llvm_build_path; 
+    my $clang_search_path = "/opt/rocm/llvm";
+    if (-d $llvm_build_path) {
+        $clang_search_path = "$llvm_build_path\;$clang_search_path"; 
     }
-    $cmake_command .= " -DCMAKE_PREFIX_PATH=$cmake_prefix_path";
-
+    $cmake_command .= " -DCMAKE_PREFIX_PATH=\"$clang_search_path\"";
     $cmake_command .= " -DCMAKE_INSTALL_PREFIX=$rocdl_install_path";
     $cmake_command .= " -DCPACK_PACKAGING_INSTALL_PREFIX=$rocdl_install_path";
-
     $cmake_command .= " $rocdl_source_path";
 
-    if ($rocdl_build_path eq "") {
-        $rocdl_build_path = "$current_path/build.rocdl.$cmake_build_type";
-    }
     run_cmake_command($cmake_command, $rocdl_build_path, $dry_run);
+}
+
+# comgr specific
+if ($comgr_build_path eq "") {
+    $comgr_build_path = "$current_path/build.comgr.$cmake_build_type";
+}
+if ($components_to_build eq "comgr") {
+    $cmake_command .= " -DCMAKE_PREFIX_PATH=\"$llvm_build_path\;$rocdl_build_path\"";
+    $cmake_command .= " -DCMAKE_INSTALL_PREFIX=$comgr_install_path";
+    $cmake_command .= " -DCPACK_PACKAGING_INSTALL_PREFIX=$comgr_install_path";
+    $cmake_command .= " $comgr_source_path";
+    
+    run_cmake_command($cmake_command, $comgr_build_path, $dry_run);
 }
 
 # ROCclr specific
