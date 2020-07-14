@@ -59,8 +59,9 @@ my $rocdl_source_path = "$current_path/ROCm-Device-Libs";
 my $rocdl_build_path = "";
 
 # comgr
+my $comgr_repo_name = "ROCm-CompilerSupport";
 my $comgr_install_path = "$rocm_path";
-my $comgr_source_path = "$current_path/support/lib/comgr";
+my $comgr_source_path = "$current_path/$comgr_repo_name/lib/comgr";
 my $comgr_build_path = "";
 
 # ROCclr
@@ -68,7 +69,9 @@ my $rocclr_repo_name = "ROCclr";
 my $rocclr_install_path = "$rocm_path/rocclr";
 my $rocclr_source_path = "$current_path/$rocclr_repo_name";
 my $rocclr_build_path = "";
-my $opencl_source_path = "$current_path/opencl";
+
+my $opencl_repo_name = "ROCm-OpenCL-Runtime";
+my $opencl_source_path = "$current_path/$opencl_repo_name";
 
 # HIP
 my $hip_repo_name = "HIP";
