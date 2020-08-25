@@ -20,7 +20,7 @@ if [ -d $HOST_SHARED_DIR ]; then
   DOCKER_SHARED="-v $HOST_SHARED_DIR:$CONTAINER_DIR"
 fi
 
-docker run --privileged --shm-size="1g" -tid $DOCKER_SHARED -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup --dns=$DNS_SERVER1 --dns=$DNS_SERVER2 --expose 22 -P --name $CONTAINER   $IMAGE /usr/sbin/init
+docker run --privileged --shm-size="16g" -tid $DOCKER_SHARED -e "container=docker" -v /sys/fs/cgroup:/sys/fs/cgroup  --expose 22 -P --name $CONTAINER   $IMAGE /usr/sbin/init
 docker port $CONTAINER
 
 

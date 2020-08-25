@@ -15,16 +15,22 @@ GetOptions('exit=i' => \$filter_exit_limit,
 
 my @users = qw(
   ashi1
+  anusha
   cdevadas
   dbhaskar
   dsalinas
+  jatin
+  jdaily
   lmoriche
+  mangupta
+  pghafari
   payam
   rgarg
   rksharma
   saiislam
   sarbojit
   scchan
+  sdittaka
   ssahasra
   ssarkar
   zukhan
@@ -57,6 +63,9 @@ while (chomp(my $line = <$docker_ps>)) {
       }
       elsif ($es[1] eq "months") {
         $exited = $es[0] * 30;
+      }
+      elsif ($es[1] eq "hours") {
+        $exited = 0;
       }
       else {
         die "Unrecognized status: $status_string";
