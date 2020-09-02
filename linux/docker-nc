@@ -27,6 +27,9 @@ DOCKER_OPTS="$DOCKER_OPTS $DOCKER_SHARED"
 
 DOCKER_OPTS="$DOCKER_OPTS -u scchan"
 
+# for ptrace priviledge needed by gdb
+DOCKER_OPTS="$DOCKER_OPTS --cap-add=SYS_PTRACE"
+
 docker run --privileged --shm-size="1g" -tid $DOCKER_OPTS --expose 22 -P --name $CONTAINER  $IMAGE
 
 docker-sshd.ubuntu $CONTAINER
