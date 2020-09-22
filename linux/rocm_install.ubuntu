@@ -1,0 +1,4 @@
+#!/bin/bash
+
+set -x
+apt-get install rocm-dev aomp-amdgpu aomp-amdgpu-tests  rocprim rocrand rocsolver rocsparse rocthrust rocfft rocblas hipblas miopengemm

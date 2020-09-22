@@ -1,0 +1,4 @@
+#!/bin/bash
+set -x
+
+apt purge hip-* llvm-amdgpu comgr rocm-device-libs  rocm-dev aomp-amdgpu aomp-amdgpu-tests  rocprim rocrand rocsolver rocsparse rocthrust rocfft rocblas hipblas miopengemm
