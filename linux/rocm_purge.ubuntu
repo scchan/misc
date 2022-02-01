@@ -1,4 +1,4 @@
 #!/bin/bash
 set -x
 
-apt purge hip-* rocm-llvm rocm-llvm-alt llvm-amdgpu comgr rocm-device-libs  rocm-dev rocprim rocrand rocsolver rocsparse rocthrust rocfft rocblas hipblas hsa-amd-aqlprofile hsa-rocr-dev hsakmt-roct hsakmt-roct-dev rocm-cmake rocm-smi-lib rocminfo rocprofiler-dev roctracer-dev hipblas hipcub hipfft hipsparse miopen-hip rccl rocalution rocblas rocfft rocm-libs rocprim rocrand rocsolver rocsparse rocthrust rocm-gdb
+apt purge hip-* hipify-clang  rocm-llvm rocm-llvm-alt llvm-amdgpu comgr rocm-device-libs  rocm-dev rocprim rocrand rocsolver rocsparse rocthrust rocfft rocblas hipblas hsa-amd-aqlprofile hsa-rocr-dev hsakmt-roct hsakmt-roct-dev rocm-cmake rocm-smi-lib rocminfo rocprofiler-dev roctracer-dev hipblas hipcub hipfft hipsparse miopen-hip rccl rocalution rocblas rocfft rocm-libs rocprim rocrand rocsolver rocsparse rocthrust rocm-gdb
