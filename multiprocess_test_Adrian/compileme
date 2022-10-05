@@ -1,5 +1,0 @@
-#!/bin/bash
-
-g++ fork_exec.cpp -o fork_exec -std=c++11
-
-clang++ ` clamp-config  --cxxflags --ldflags` -Xclang -fhsa-ext -Xclang -fno-auto-auto  async_array_add.cpp -o async_array_add

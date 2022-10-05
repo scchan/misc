@@ -1,3 +1,0 @@
-#!/bin/bash
-
-./fork_exec 32 ./async_array_add 

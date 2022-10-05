@@ -1,8 +1,0 @@
-#!/bin/bash
-
-UPSTREAM=git@github.com:scchan/compiler-rt.git
-UPSTREAM_NAME=scchan
-
-git remote add $UPSTREAM_NAME $UPSTREAM
-
-git fetch $UPSTREAM_NAME

@@ -1,7 +1,0 @@
-#!/bin/bash
-echo "Kill test.out which has been executed longer than 10 seconds"
-while true; do
-  sleep 3
-  ps ux | awk '/test\.out$/ {split($10, a, ":"); if (a[2] > 10) print $2}' - | xargs kill -15
-done
-

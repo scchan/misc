@@ -1,8 +1,0 @@
-#!/bin/bash
-
-UPSTREAM=git@github.com:RadeonOpenCompute/hcc.git
-UPSTREAM_NAME=upstream
-
-git remote add $UPSTREAM_NAME $UPSTREAM
-
-git fetch $UPSTREAM_NAME

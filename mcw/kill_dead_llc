@@ -1,9 +1,0 @@
-#!/bin/bash
-echo "Kill llc opt  which has been executed longer than 10 minutes"
-while true; do
-  sleep 300
-  ps -o etime=,pid= -C llc | awk '{gsub(/^[ \t]+/,"",$0); split($0,a,":"); if (a[1]>10) {split($0,b," "); print b[2]}}' - | xargs kill -15 
-  ps -o etime=,pid= -C opt | awk '{gsub(/^[ \t]+/,"",$0); split($0,a,":"); if (a[1]>10) {split($0,b," "); print b[2]}}' - | xargs kill -15
-  ps -o etime=,pid= -C clang-3.3 | awk '{gsub(/^[ \t]+/,"",$0); split($0,a,":"); if (a[1]>10) {split($0,b," "); print b[2]}}' - | xargs kill -15
-done
-
