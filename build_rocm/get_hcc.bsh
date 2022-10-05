@@ -1,8 +1,0 @@
-#!/bin/bash
-
-set -x
-
-HCC_REPO=https://github.com/RadeonOpenCompute/hcc.git
-HCC_RELEASE=clang_tot_upgrade
-
-git clone --recursive $HCC_REPO && cd hcc && git checkout $HCC_RELEASE && git submodule update && cd ..

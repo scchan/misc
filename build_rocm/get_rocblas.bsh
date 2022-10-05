@@ -1,7 +1,0 @@
-#!/bin/bash
-
-ROCBLAS_REPO=https://github.com/ROCmSoftwarePlatform/rocBLAS.git
-
-RELEASE=master
-
-git clone -b $RELEASE $ROCBLAS_REPO

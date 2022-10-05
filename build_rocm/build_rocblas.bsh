@@ -1,7 +1,0 @@
-#!/bin/bash
-set -x
-ROCBLAS_SRC_DIR=rocBLAS
-
-cd $ROCBLAS_SRC_DIR
-./install.sh -icd
-cd ..
