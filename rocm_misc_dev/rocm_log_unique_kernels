@@ -1,0 +1,64 @@
+#!/bin/bash
+#set -x
+# script to parse the HIP logs (e.g. AMD_LOG_LEVEL=3) and print out unique kernel names
+
+# arg parsing logic copied shamelessly from 
+# https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+
+# More safety, by turning some bugs into errors.
+# Without `errexit` you don’t need ! and can replace
+# ${PIPESTATUS[0]} with a simple $?, but I prefer safety.
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# -allow a command to fail with !’s side effect on errexit
+# -use return value from ${PIPESTATUS[0]}, because ! hosed $?
+! getopt --test > /dev/null 
+if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
+    echo 'I’m sorry, `getopt --test` failed in this environment.'
+    exit 1
+fi
+
+LONGOPTS=help,input
+OPTIONS=hi:
+! PARSED=$(getopt --options=$OPTIONS --longoptions=$LONGOPTS --name "$0" -- "$@")
+
+if [[ ${PIPESTATUS[0]} -ne 0 ]]; then
+    # e.g. return value is 1
+    #  then getopt has complained about wrong arguments to stdout
+    exit 2
+fi
+# read getopt’s output this way to handle the quoting right:
+eval set -- "$PARSED"
+
+
+INPUT=""
+
+while true; do
+  case "$1" in
+    -h|--help)
+      echo "Usage: $0 -i <input>"
+      exit 0
+      ;;
+    -i|--input)
+      INPUT="$2"
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      echo "Unknown error."
+      exit 1
+      ;;
+  esac
+done
+
+
+if [ "$INPUT" = "" ];
+then
+  echo "No input file."
+  exit 1
+fi
+
+grep ShaderName $INPUT | sed --expression='s/^.*ShaderName : //g' | sort | uniq
