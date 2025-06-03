@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SSH_EXISTING_SOCK=$(find /tmp -maxdepth 1 -type d -name 'ssh-*' -user $USER | xargs -I {} find {} -type s)
+
+if [ -n "$SSH_AUTH_SOCK" ]; then
+    mkdir -p $(dirname $SSH_AUTH_SOCK)
+    ln -sf $SSH_EXISTING_SOCK $SSH_AUTH_SOCK
+fi
